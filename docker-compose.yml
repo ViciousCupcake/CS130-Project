@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+  web:
+    build: ./docker/django
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 2; done; python3 manage.py migrate && python manage.py runserver 0.0.0.0:8000'
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_NAME=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    depends_on:
+      - db
+      - fuseki
+  fuseki:
+    build:
+      context: ./docker/fuseki
+      dockerfile: Dockerfile
+    ports:
+      - "3030:3030"
+    environment:
+      - ADMIN_PASSWORD=postgres
+      - FUSEKI_DATASET_1=mydataset
+      - ENABLE_DATA_WRITE=true
+      - ENABLE_UPDATE=true
+      - ENABLE_UPLOAD=true
+      - ENABLE_REMOTE_DATA_ACCESS=true
+      - ENABLE_FILE_UPLOAD=true
+      - ENABLE_FILE_UPLOAD_AUTH=false
+      - JENA_HOME=/jena-fuseki
+      - JVM_ARGS=-Xmx2048M
+      - TZ=America/Los_Angeles
+
+    volumes:
+      - ./data/fuseki:/fuseki
+
+    command: ["sh", "-c", "/jena-fuseki/fuseki-server"]
