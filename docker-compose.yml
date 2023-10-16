@@ -39,8 +39,6 @@ services:
       - JENA_HOME=/jena-fuseki
       - JVM_ARGS=-Xmx2048M
       - TZ=America/Los_Angeles
-
     volumes:
       - ./data/fuseki:/fuseki
-
     command: ["sh", "-c", "/jena-fuseki/fuseki-server"]
