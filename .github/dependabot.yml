@@ -15,7 +15,12 @@ updates:
       patterns:
         - "*"
   - package-ecosystem: "docker"
-    directory: "/docker/"
+    directory: "/docker/django/"
+    schedule:
+      interval: "daily"
+      time: "13:00"
+  - package-ecosystem: "docker"
+    directory: "/docker/fuseki/"
     schedule:
       interval: "daily"
       time: "13:00"
