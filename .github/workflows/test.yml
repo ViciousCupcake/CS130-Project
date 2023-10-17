@@ -1,0 +1,37 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Start PostgreSQL
+      run: |
+        sudo systemctl start postgresql.service
+        sudo -u postgres createuser -s postgres
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -y libcurl4-openssl-dev libpython3-dev libssl-dev
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Run Tests
+      env:
+        POSTGRES_NAME: postgres
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+      run: python manage.py test
