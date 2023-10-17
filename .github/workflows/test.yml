@@ -17,5 +17,5 @@ jobs:
         with:
           compose-file: "docker-compose.yml"
           down-flags: "--volumes"
-          test-container: cs130-project-web-1
-          test-command: "python manage.py test"
+          test-container: cs130-project_web_1
+          test-command: "python3 manage.py test"
