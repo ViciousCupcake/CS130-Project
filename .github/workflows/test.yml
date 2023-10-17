@@ -22,7 +22,6 @@ jobs:
     - name: Start PostgreSQL
       run: |
         sudo systemctl start postgresql.service
-        sudo -u postgres createuser -s postgres
     - name: Install Dependencies
       run: |
         sudo apt-get update -qq
