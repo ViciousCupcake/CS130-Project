@@ -1,10 +1,4 @@
 # Repository Template
-To start the server, run `./start.sh`
-
-Fuseki is available at localhost:3030
-Django is available at localhost:8000
-Username for fuseki: Admin
-password: postgres
 
 [![Build Status](https://app.travis-ci.com/melaasar/cs130-template.svg?branch=master)](https://app.travis-ci.com/github/melaasar/cs130-template)
 [![Release](https://img.shields.io/github/v/release/melaasar/cs130-template?label=release)](https://github.com/melaasar/cs130-template/releases/latest)
