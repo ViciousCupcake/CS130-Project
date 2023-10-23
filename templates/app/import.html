@@ -1,0 +1,12 @@
+
+{% extends "base.html" %}
+
+{% block title %}Import Mapping{% endblock title %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form }}
+    <button type="submit">Submit</button>
+</form>
+{% endblock content %}

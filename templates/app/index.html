@@ -1,8 +1,7 @@
-<html>
-    <head>
-        <title>Example</title>
-    </head>
-    <body>
-        <p>Received {{ data }} from backend.</p>
-    </body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Example{% endblock title %}
+
+{% block content %}
+    <p>Received {{ data }} from backend.</p>
+{% endblock content %}
