@@ -1,0 +1,21 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+
+    steps:
+      # need checkout before using docker-compose-action
+      - uses: actions/checkout@v3
+      - uses: adambirds/docker-compose-action@v1.3.0
+        with:
+          compose-file: "docker-compose.yml"
+          down-flags: "--volumes"
+          test-container: web
+          test-command: "python3 manage.py test"
