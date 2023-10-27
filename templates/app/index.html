@@ -4,4 +4,12 @@
 
 {% block content %}
     <p>Received {{ data }} from backend.</p>
+    {% if user.is_authenticated %}
+        You are an admin, authenticated with username: {{ user.username }}!
+        <p><a href="{% url 'logout' %}">Log Out</a></p>
+    {% else %}
+        <p>Want to log in?</p>
+        <a href="{% url 'login' %}">Log In</a>
+    {% endif %}
 {% endblock content %}
+
