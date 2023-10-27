@@ -6,7 +6,6 @@ from . import views
 urlpatterns = [
     path("", views.index, name="index"),
     path("list/", views.list, name='list'),
-    path("import/", views.import_mapping, name="import"),
 
     # This defines:
         # accounts/login/ [name='login']
@@ -19,4 +18,8 @@ urlpatterns = [
         # accounts/reset/<uidb64>/<token>/ [name='password_reset_confirm']
         # accounts/reset/done/ [name='password_reset_complete']
     path("accounts/", include("django.contrib.auth.urls")),
+    path("select/", views.select_mapping, name="select"),
+    path("modify/", views.modify_mapping, name="modify"),
+    path("modify/<int:pk>/", views.modify_mapping, name="modify"),
+
 ]

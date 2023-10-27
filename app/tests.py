@@ -1,13 +1,13 @@
 from django.test import TestCase
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from app.models import Mapping
+from .models import Mapping
+from .forms import MappingForm
 
 class EFITestCase(TestCase):
     """Test Cases for EFi App."""
     def test_saving_mapping_model(self):
         """Test saving a mapping model."""
-
         mapping = Mapping(
             title="Test Mapping",
             description="Test description",
@@ -21,6 +21,18 @@ class EFITestCase(TestCase):
         self.assertEqual(saved_mapping.description, "Test description")
         self.assertEqual(saved_mapping.fuseki_query, "Test query")
         self.assertEqual(saved_mapping.excel_format, {"test": "format"})
+
+    def test_form_validation_fail(self):
+        """Test Mapping ModelForm validation."""
+
+        form = MappingForm(data={'title': 'test', 'description': 'test', 'fuseki_query': 'test', 'excel_format': 'test'})
+        self.assertFalse(form.is_valid())
+
+    def test_form_validation_success(self):
+        """Test Mapping ModelForm validation."""
+
+        form = MappingForm(data={'title': 'test', 'description': 'test', 'fuseki_query': 'test', 'excel_format': '{"test": "data"}'})
+        self.assertTrue(form.is_valid())
 
     def test_auth(self):
         """Test authentication."""
