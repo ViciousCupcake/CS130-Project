@@ -3,11 +3,12 @@
 {% block title %}All values from DB{% endblock title %}
 
 {% load static %} 
+ <!--This line not working. not sure why--> 
+<link rel="stylesheet" href="{% static 'app/style.css' %}">
 
 {% block content %}
 <head>
     <title>Excel File Upload</title>
-    <link rel="stylesheet" href="{% static 'app/style.css' %}">
 </head>
 <h2>Upload an Excel File</h2>
 <form method="post" enctype="multipart/form-data">
