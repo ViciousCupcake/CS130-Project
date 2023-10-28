@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}All values from DB{% endblock title %}
+
+{% block content %}
+<head>
+    <title>Success Page</title>
+</head>
+<body>
+    <h2>Upload and Processing Successful</h2>
+    <p>Your Excel file has been processed successfully.</p>
+    <!-- You can display additional information here if needed. -->
+    <a href="{% url 'upload' %}">Back to Upload Page</a>
+</body>
+{% endblock content %}
