@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Mapping
 from .forms import MappingForm
+import pandas as pd
 
 def index(request):
     return render(request, "app/index.html", {'data': 'Hello, world!'})
@@ -20,27 +21,17 @@ def import_mapping(request):
  
     return render(request, "app/import.html", {'form': form})
 
-
-
 def upload(request):
     if request.method == 'POST':
         # Check if a file was uploaded
         if 'excelFile' in request.FILES:
             uploaded_file = request.FILES['excelFile']
-
-            # Check if the uploaded file is an Excel file (you can add more validation here)
             if uploaded_file.name.endswith(('.xls', '.xlsx')):
-                # Process the uploaded Excel file here
-                # Example: Use a library like pandas to read the data
-                import pandas as pd
                 df = pd.read_excel(uploaded_file)
-
-                # Perform data processing with 'df'
-
-                # You can access the file name, content, and other attributes if needed
+                num_rows = df.shape[0]
                 file_name = uploaded_file.name
                 file_content = uploaded_file.read()
-            return render(request, "app/success.html")
+            return render(request, "app/success.html", {'num_rows': num_rows})
         else:
             return render(request, "app/upload.html", {'error': 'Invalid file format'})
 

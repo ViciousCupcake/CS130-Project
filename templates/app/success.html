@@ -9,7 +9,9 @@
 <body>
     <h2>Upload and Processing Successful</h2>
     <p>Your Excel file has been processed successfully.</p>
-    <!-- You can display additional information here if needed. -->
+    {% if num_rows %}
+        <p>Number of Rows in the Excel File: {{ num_rows }}</p>
+    {% endif %}
     <a href="{% url 'upload' %}">Back to Upload Page</a>
 </body>
 {% endblock content %}

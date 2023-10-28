@@ -14,4 +14,3 @@ class Mapping(models.Model):
     excel_format = models.JSONField()
     last_updated = models.DateTimeField(auto_now=True)
     
-    
