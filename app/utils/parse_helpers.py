@@ -4,8 +4,9 @@ from rdflib import Graph, Literal, Namespace, URIRef
 
 def parse_excel(file, name):
     """Convert an excel sheet to rdf"""
-    df = pd.read_excel(file)
 
+    df = pd.read_excel(file)
+    
     # Create an RDF graph
     g = Graph()
 
@@ -24,4 +25,8 @@ def parse_excel(file, name):
     # Serialize the graph to RDF format
     rdf_data = g.serialize(format='turtle')
     rdf_data = rdf_data.replace("@prefix", "PREFIX")
-    return rdf_data
+
+    # seperate the prefix with triples
+    prefixes, triples = rdf_data.split('\n\n', 1)
+    prefixes = '\n'.join(line.rstrip(' .') for line in prefixes.splitlines())
+    return (prefixes, triples)

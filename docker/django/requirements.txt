@@ -5,3 +5,4 @@ numpy>=1.21.2
 openpyxl
 rdflib
 SPARQLWrapper
+requests
