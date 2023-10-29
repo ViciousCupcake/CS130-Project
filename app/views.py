@@ -68,13 +68,14 @@ def upload_to_fuseki(rdf_data):
 
 def upload(request):
     """ Upload and parse an excel sheet"""
-    
+
     if request.method == 'POST':
         if 'excelFile' in request.FILES:
             uploaded_file = request.FILES['excelFile']
             if uploaded_file.name.endswith(('.xls', '.xlsx')):
                 file_name = uploaded_file.name
                 rdf_data = parse_excel(uploaded_file, file_name)
+                # TODO: mapping scheme could apply here later on
                 upload_to_fuseki(rdf_data)
                 return render(request, "app/upload_success.html", {'file_name': file_name})
             else:

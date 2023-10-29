@@ -13,3 +13,4 @@ class Mapping(models.Model):
     fuseki_query = models.TextField()
     excel_format = models.JSONField()
     last_updated = models.DateTimeField(auto_now=True)
+    
