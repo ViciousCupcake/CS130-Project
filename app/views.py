@@ -3,6 +3,9 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import Mapping
 from .forms import MappingForm
+import pandas as pd
+from SPARQLWrapper import SPARQLWrapper, POST
+from .utils.parse_helpers import parse_excel
 
 def index(request):
     return render(request, "app/index.html", {'data': 'Hello, world!'})
@@ -45,3 +48,35 @@ def modify_mapping(request, pk=None):
             return render(request, "app/save_success.html", {'mapping_title': form.cleaned_data['title']})
         else:
             return render(request, "app/modify.html", {'form': form})
+
+
+def upload_to_fuseki(rdf_data):
+    sparql = SPARQLWrapper("http://host.docker.internal:3030/mydataset/update")
+    # Set the credentials for authentication
+    username = "admin"
+    password = "postgres"
+    sparql.setCredentials(username, password)
+    sparql.setMethod(POST)
+    sparql.setQuery(f"""
+        INSERT DATA {{
+            {rdf_data}
+        }}
+    """)
+    sparql.query()
+
+
+def upload(request):
+    if request.method == 'POST':
+        if 'excelFile' in request.FILES:
+            uploaded_file = request.FILES['excelFile']
+            if uploaded_file.name.endswith(('.xls', '.xlsx')):
+                file_name = uploaded_file.name
+                rdf_data = parse_excel(uploaded_file, file_name)
+                upload_to_fuseki(rdf_data)
+                return render(request, "app/success.html", {'file_name': file_name})
+            else:
+                return render(request, "app/upload.html", {'error': 'Invalid file format'})
+        else:
+            return render(request, "app/upload.html", {'error': 'No file uploaded'})
+
+    return render(request, "app/upload.html", {'data': 'Hello, world!'})

@@ -6,6 +6,7 @@ from . import views
 urlpatterns = [
     path("", views.index, name="index"),
     path("list/", views.list, name='list'),
+    path("upload/", views.upload, name="upload"),
 
     # This defines:
         # accounts/login/ [name='login']
