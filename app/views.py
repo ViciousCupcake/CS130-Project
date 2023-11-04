@@ -5,6 +5,10 @@ from .models import Mapping
 from .forms import MappingForm
 from .utils.parse_helpers import parse_excel
 
+# credentials for fuseki
+USERNAME = "admin"
+PASSWORD = "postgres"
+
 def index(request):
     return render(request, "app/index.html", {'data': 'Hello, world!'})
 
@@ -53,9 +57,7 @@ def upload_to_fuseki(rdf_data):
 
     sparql = SPARQLWrapper("http://host.docker.internal:3030/mydataset/update")
     # Set the credentials for authentication
-    username = "admin"
-    password = "postgres"
-    sparql.setCredentials(username, password)
+    sparql.setCredentials(USERNAME, PASSWORD)
     sparql.setMethod(POST)
     sparql.setQuery(f"""
     {rdf_data[0]}
@@ -76,10 +78,12 @@ def upload(request):
                 file_name = uploaded_file.name
                 rdf_data = parse_excel(uploaded_file, file_name)
                 # TODO: mapping scheme could apply here later on
+                # mapping shemes can either apply on top of the rdf_data
+                # or it can be applied on the raw excel data as well
                 upload_to_fuseki(rdf_data)
                 return render(request, "app/upload_success.html", {'file_name': file_name})
             else:
-                return render(request, "app/upload.html", {'error': 'Invalid file format'})
+                return render(request, "app/upload.html", {'error': 'Invalid file format: an .xls or .xlsx file is expected'})
         else:
             return render(request, "app/upload.html", {'error': 'No file uploaded'})
 
