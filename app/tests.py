@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from .models import Mapping
+from .models import Mapping, Fuski_Relation, Fuski_Relations_Group
 from .forms import MappingForm
 
 class EFITestCase(TestCase):
@@ -21,6 +21,10 @@ class EFITestCase(TestCase):
         self.assertEqual(saved_mapping.description, "Test description")
         self.assertEqual(saved_mapping.fuseki_query, "Test query")
         self.assertEqual(saved_mapping.excel_format, {"test": "format"})
+        
+    def test_saving_fuski_relations_list_model(self):
+        """Test saving a fuski relations list model with a single fuski relation model."""
+        
 
     def test_form_validation_fail(self):
         """Test Mapping ModelForm validation."""
