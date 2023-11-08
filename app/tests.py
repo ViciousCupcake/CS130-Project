@@ -23,8 +23,47 @@ class EFITestCase(TestCase):
         self.assertEqual(saved_mapping.excel_format, {"test": "format"})
         
     def test_saving_fuski_relations_list_model(self):
-        """Test saving a fuski relations list model with a single fuski relation model."""
+        """Test saving a fuski relations list model."""
+        relation1 = Fuski_Relation.objects.create(
+            name="Test Relation",
+            description="Test description",
+            attribute1="Test Attribute 1",
+            attribute2="Test Attribute 2",
+        )
+        relation2 = Fuski_Relation.objects.create(
+            name="Test Relation 2",
+            description="Test description 2",
+            attribute1="Test Attribute 3",
+            attribute2="Test Attribute 4",
+        )
         
+        relations_list = Fuski_Relations_Group.objects.create(
+            name="Test Relations List",
+            description="Test description",
+        )
+        relations_list.relations.add(relation1)
+        relations_list.relations.add(relation2)
+        
+        saved_relations_list = Fuski_Relations_Group.objects.all()[0]
+        self.assertEqual(saved_relations_list.name, "Test Relations List")
+        self.assertEqual(saved_relations_list.description, "Test description")
+        self.assertEqual(saved_relations_list.relations.all()[0], relation1)
+        self.assertEqual(saved_relations_list.relations.all()[1], relation2)
+        
+    def test_saving_fuski_relation_model(self):
+        """Test saving a fuski relation model."""
+        relation = Fuski_Relation.objects.create(
+            name="Test Relation",
+            description="Test description",
+            attribute1="Test Attribute 1",
+            attribute2="Test Attribute 2",
+        )
+        
+        saved_relation = Fuski_Relation.objects.all()[0]
+        self.assertEqual(saved_relation.name, "Test Relation")
+        self.assertEqual(saved_relation.description, "Test description")
+        self.assertEqual(saved_relation.attribute1, "Test Attribute 1")
+        self.assertEqual(saved_relation.attribute2, "Test Attribute 2")
 
     def test_form_validation_fail(self):
         """Test Mapping ModelForm validation."""
