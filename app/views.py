@@ -4,10 +4,7 @@ from SPARQLWrapper import SPARQLWrapper, POST
 from .models import Mapping
 from .forms import MappingForm
 from .utils.parse_helpers import parse_excel
-
-# credentials for fuseki
-USERNAME = "admin"
-PASSWORD = "postgres"
+import os
 
 def index(request):
     return render(request, "app/index.html", {'data': 'Hello, world!'})
@@ -57,7 +54,7 @@ def upload_to_fuseki(rdf_data):
 
     sparql = SPARQLWrapper("http://host.docker.internal:3030/mydataset/update")
     # Set the credentials for authentication
-    sparql.setCredentials(USERNAME, PASSWORD)
+    sparql.setCredentials(os.getenv('FUSEKI_USER'), os.getenv('FUSEKI_PASSWORD'))
     sparql.setMethod(POST)
     sparql.setQuery(f"""
     {rdf_data[0]}
@@ -66,6 +63,7 @@ def upload_to_fuseki(rdf_data):
     }}
     """)
     sparql.query()
+    
 
 
 def upload(request):

@@ -18,6 +18,8 @@ services:
       - POSTGRES_NAME=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - FUSEKI_USER=admin
+      - FUSEKI_PASSWORD=postgres
     depends_on:
       - db
       - fuseki
