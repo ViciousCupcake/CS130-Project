@@ -66,3 +66,15 @@ class EFITestCase(TestCase):
 
         response = self.client.get('/accounts/logout/')
         self.assertEqual(response.status_code, 302)
+
+    def test_export_mapping_reachable(self):
+        """Test export mapping page reachable."""
+
+        response = self.client.get('/accounts/export/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_export_mapping_reachable(self):
+        """Test download fails with GET request"""
+
+        response = self.client.get('/accounts/download/')
+        self.assertNotEqual(response.status_code, 200)

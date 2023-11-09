@@ -21,5 +21,8 @@ urlpatterns = [
     path("select/", views.select_mapping, name="select"),
     path("modify/", views.modify_mapping, name="modify"),
     path("modify/<int:pk>/", views.modify_mapping, name="modify"),
+    path("export/", views.export_mapping, name="export"),
+    path("export/<int:pk>/", views.export_mapping, name="export"),
+    path("download/", views.download_excel, name="download")
 
 ]
