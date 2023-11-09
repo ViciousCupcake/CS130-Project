@@ -19,7 +19,8 @@ class Fuski_Relations_Group(models.Model):
     """
     Represents a list of relationships between attributes.
     """
-    name = models.CharField(max_length=255, help_text="Name of the group of relationships.")
+    # Unique name
+    name = models.CharField(max_length=255, db_index=True, unique=True, help_text="Name of the group of relationships.")
     description = models.TextField(blank=True, help_text="Description of the group of relationships.")
     relations = models.ManyToManyField('Fuski_Relation', help_text="Relationships between attributes.")
     

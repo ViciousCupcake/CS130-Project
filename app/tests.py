@@ -110,23 +110,6 @@ class EFITestCase(TestCase):
         fs.insert_pandas_dataframe_into_sparql_graph(
             "Test_Graph", "Test_Relations_List", df)
 
-        # sparql = SPARQLWrapper("http://host.docker.internal:3030/mydataset/query")
-        # sparql.setCredentials("admin", "postgres")
-        # sparql.setReturnFormat(JSON)
-        # sparql.setQuery("""
-        #     PREFIX : <http://example/>
-        #     SELECT ?s ?p ?o
-        #     WHERE {
-        #         GRAPH :Test_Graph {
-        #             ?s ?p ?o
-        #         }
-        #     }
-        # """)
-        # results = sparql.query().convert()
-        # self.assertEqual(len(results["results"]["bindings"]), 1)
-        
-        # fs.remove_sparql_graph("Test_Graph")
-
     def test_form_validation_fail(self):
         """Test Mapping ModelForm validation."""
 
@@ -168,9 +151,7 @@ class EFITestCase(TestCase):
 
     def test_logout(self):
         """Test logout."""
-
         User.objects.create_user(username='test', password='test')
         self.client.login(username='test', password='test')
-
         response = self.client.get('/accounts/logout/')
         self.assertEqual(response.status_code, 302)
