@@ -31,9 +31,13 @@ def upload(request):
                 num_rows = df.shape[0]
                 file_name = uploaded_file.name
                 file_content = uploaded_file.read()
-            return render(request, "app/success.html", {'num_rows': num_rows})
+                return render(request, "app/success.html", {'num_rows': num_rows})
+            else:
+                return render(request, "app/upload.html", {'error': 'Invalid file format'})
         else:
-            return render(request, "app/upload.html", {'error': 'Invalid file format'})
-
-    return render(request, "app/upload.html", {'data': 'Hello, world!'})
-
+            return render(request, "app/upload.html", {'error': 'No file found'})
+    elif request.method == 'GET':
+        mappings = Mapping.objects.all()
+        return render(request, "app/upload.html", {"mappings": mappings})
+    else:
+        return render(request, "app/upload.html", {"data": 'unresolved request'})

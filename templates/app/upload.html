@@ -7,9 +7,6 @@
 {% load static %} 
 <link rel="stylesheet" href="{% static 'app/style.css' %}">
 
-<head>
-    <title>Excel File Upload</title>
-</head>
 <h2>Upload an Excel File</h2>
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
