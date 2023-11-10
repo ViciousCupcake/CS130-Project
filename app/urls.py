@@ -18,8 +18,11 @@ urlpatterns = [
         # accounts/reset/<uidb64>/<token>/ [name='password_reset_confirm']
         # accounts/reset/done/ [name='password_reset_complete']
     path("accounts/", include("django.contrib.auth.urls")),
+
+    # CRUD Operations that administrative users can perform.
+    # Login is required to access these pages.
     path("select/", views.select_mapping, name="select"),
     path("modify/", views.modify_mapping, name="modify"),
     path("modify/<int:pk>/", views.modify_mapping, name="modify"),
-
+    path("delete/", views.delete_mapping, name="delete"),
 ]
