@@ -1,8 +1,9 @@
 from django.test import TestCase
-from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from .models import Mapping
-from .forms import MappingForm
+from django.test import Client
+from django.contrib.auth import authenticate
+from app.models import Mapping
+from app.forms import MappingForm
 
 class EFITestCase(TestCase):
     """Test Cases for EFi App."""
@@ -22,6 +23,21 @@ class EFITestCase(TestCase):
         self.assertEqual(saved_mapping.fuseki_query, "Test query")
         self.assertEqual(saved_mapping.excel_format, {"test": "format"})
 
+    def test_delete_model(self):
+        """Test that a model can be deleted."""
+
+        # Create admin user
+        user = User.objects.create_user(username='admin', password='admin')
+
+        client = Client()
+        client.login(username='admin', password='admin')
+
+        # Create a mapping
+        Mapping.objects.create(title='test', description='test', fuseki_query='test', excel_format='{"test": "test"}')
+        client.post('/delete/', {'id': 1})
+
+        # Check that the mapping was deleted
+        self.assertEqual(Mapping.objects.count(), 0)
     def test_form_validation_fail(self):
         """Test Mapping ModelForm validation."""
 
