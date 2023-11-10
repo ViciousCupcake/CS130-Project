@@ -95,7 +95,7 @@ class EFITestCase(TestCase):
         client.login(username='admin', password='admin')
 
         # Create a mapping
-        Mapping.objects.create(title='test', description='test', fuseki_query='test', excel_format='{"test": "test"}')
+        Mapping.objects.create(title='test', description='test', fuseki_relations='[["test", "test", "test"]]', excel_format='{"test": "test"}')
         client.post('/delete/', {'id': 1})
 
         # Check that the mapping was deleted
