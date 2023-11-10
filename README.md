@@ -3,7 +3,7 @@ To start the server, run `./start.sh`
 
 Fuseki is available at localhost:3030
 Django is available at localhost:8000
-Username for fuseki: Admin
+Username for fuseki: admin
 password: postgres
 
 [![Build Status](https://app.travis-ci.com/melaasar/cs130-template.svg?branch=master)](https://app.travis-ci.com/github/melaasar/cs130-template)
