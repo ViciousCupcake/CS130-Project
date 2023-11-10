@@ -1,5 +1,5 @@
 from SPARQLWrapper import SPARQLWrapper, JSON, POST
-from app.models import Fuski_Relation, Fuski_Relations_Group
+from app.models import Mapping
 import pandas as pd
 from os import environ
 
@@ -43,7 +43,7 @@ def remove_sparql_graph(graph_name: str):
     """)
     _ = sparql.query()
     
-def insert_pandas_dataframe_into_sparql_graph(graph_name: str, relation_table_name: str, dataframe: pd.DataFrame):
+def insert_pandas_dataframe_into_sparql_graph(graph_name: str, relation_mapping_name: str, dataframe: pd.DataFrame):
     """
     Inserts a pandas dataframe into a sparql graph, using the relations stored in the django model as a schema.
     The idea is that the user will have selected the schema in which they would like to store the rows of the dataframe
@@ -65,8 +65,8 @@ def insert_pandas_dataframe_into_sparql_graph(graph_name: str, relation_table_na
     create_sparql_graph(graph_name)
     
     # Get the relations from the django model
-    relations_group = Fuski_Relations_Group.objects.get(name=relation_table_name)
-    relations = relations_group.relations.all()
+    relations_group = Mapping.objects.get(title=relation_mapping_name)
+    relations = relations_group.fuseki_relations
     
     # Insert the dataframe into the graph
     for index, row in dataframe.iterrows():
@@ -76,49 +76,8 @@ def insert_pandas_dataframe_into_sparql_graph(graph_name: str, relation_table_na
             INSERT DATA { GRAPH :""" + graph_name + """ { """
             
         for relation in relations:
-            query += ":" + row[relation.attribute1] + " :" + relation.name + " :" + row[relation.attribute2] + " . "
+            query += ":" + row[relation[0]] + " :" + relation[1] + " :" + row[relation[2]] + " . "
         query += "} }"
         
         sparql.setQuery(query)
         _ = sparql.query()
-
-def create_list_of_relations(list_of_relations: list, relation_table_name: str):
-    """
-    Creates a django Fuseki_Relations_Group model with the given list of relations and table name
-    
-    Preconditions:
-    - list_of_relations is a list of lists of length 3
-    - relation_table_name is a string
-    
-    Postconditions:
-    - A django Fuseki_Relations_Group model is created with the given list of relations and table name
-    """
-    relations_group = Fuski_Relations_Group(
-        name=relation_table_name, description="Created by script")
-    relations_group.save()
-
-    for relation in list_of_relations:
-        attribute1 = relation[0]
-        attribute2 = relation[2]
-        relation = relation[1]
-
-        new_relation = Fuski_Relation(
-            name=relation, description="Created by script", attribute1=attribute1, attribute2=attribute2)
-        new_relation.save()
-        relations_group.relations.add(new_relation)
-
-    relations_group.save()
-
-
-def remove_list_of_relations(relation_table_name: str):
-    """
-    Removes a django Fuseki_Relations_Group model with the given table name
-    
-    Preconditions:
-    - relation_table_name is a string
-    
-    Postconditions:
-    - A django Fuseki_Relations_Group model is removed with the given table name
-    """
-    relations_group = Fuski_Relations_Group.objects.get(name=relation_table_name)
-    relations_group.delete()
