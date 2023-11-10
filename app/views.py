@@ -52,7 +52,7 @@ def modify_mapping(request, pk=None):
 def upload_to_fuseki(rdf_data):
     """Uploaded parsed data (rdf data) to fuseki"""
 
-    sparql = SPARQLWrapper("http://host.docker.internal:3030/mydataset/update")
+    sparql = SPARQLWrapper("http://fuseki:3030/mydataset/update")
     # Set the credentials for authentication
     sparql.setCredentials(os.getenv('FUSEKI_USER'), os.getenv('FUSEKI_PASSWORD'))
     sparql.setMethod(POST)
