@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}All values from DB{% endblock title %}
+
+{% block content %}
+<h1>Database Contents</h1>
+<table>
+    <tr>
+        <th>Title</th>
+        <th>Description</th> 
+        <th>Time of last update</th>
+        <th></th>
+    </tr>
+    {% for x in mappings %}
+        <tr>
+            <td>{{ x.title }}</td>
+            <td>{{ x.description }}</td>
+            <td>{{ x.last_updated }}</td>
+            <td>
+                <form action="{% url 'modify' pk=x.id %}" method="get">
+                    {% csrf_token %}
+                    <input type="submit" value="Modify">
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock content %}
