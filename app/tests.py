@@ -3,12 +3,12 @@ from django.contrib.auth.models import User
 from django.test import Client
 from django.contrib.auth import authenticate
 from app.models import Mapping
+from app.forms import MappingForm
 
 class EFITestCase(TestCase):
     """Test Cases for EFi App."""
     def test_saving_mapping_model(self):
         """Test saving a mapping model."""
-
         mapping = Mapping(
             title="Test Mapping",
             description="Test description",
@@ -38,6 +38,17 @@ class EFITestCase(TestCase):
 
         # Check that the mapping was deleted
         self.assertEqual(Mapping.objects.count(), 0)
+    def test_form_validation_fail(self):
+        """Test Mapping ModelForm validation."""
+
+        form = MappingForm(data={'title': 'test', 'description': 'test', 'fuseki_query': 'test', 'excel_format': 'test'})
+        self.assertFalse(form.is_valid())
+
+    def test_form_validation_success(self):
+        """Test Mapping ModelForm validation."""
+
+        form = MappingForm(data={'title': 'test', 'description': 'test', 'fuseki_query': 'test', 'excel_format': '{"test": "data"}'})
+        self.assertTrue(form.is_valid())
 
     def test_auth(self):
         """Test authentication."""
