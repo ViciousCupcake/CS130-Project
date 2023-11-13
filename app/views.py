@@ -32,7 +32,7 @@ def modify_mapping(request, pk=None):
         except Mapping.DoesNotExist:
             form = MappingForm()
 
-        return render(request, "app/modify.html", {'form': form})
+        return render(request, "app/modify.html", {'form': form, 'pk': pk})
     # The request method is POST if user hits "submit"
     # Save the form data to the database
     else:
@@ -67,3 +67,11 @@ def upload(request):
         return render(request, "app/upload.html", {"mappings": mappings})
     else:
         return render(request, "app/upload.html", {"data": 'unresolved request'})
+
+@login_required
+def delete_mapping(request):
+    """View that allows Administrative users to delete a mapping"""
+    mapping = Mapping.objects.get(pk=request.POST['id'])
+    mapping.delete()
+    return render(request, "app/delete_success.html", {'mapping_title': mapping.title})
+
