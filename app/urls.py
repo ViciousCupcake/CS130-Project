@@ -25,5 +25,6 @@ urlpatterns = [
     path("select/", views.select_mapping, name="select"),
     path("modify/", views.modify_mapping, name="modify"),
     path("modify/<int:pk>/", views.modify_mapping, name="modify"),
+    path("upload/", views.upload, name="upload"),
     path("delete/", views.delete_mapping, name="delete"),
 ]
