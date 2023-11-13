@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}All values from DB{% endblock title %}
+
+{% block content %}
+
+{% load static %} 
+<link rel="stylesheet" href="{% static 'app/style.css' %}">
+
+<h2>Upload an Excel File</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <label for="excelFile">Select an Excel file:</label>
+    <input type="file" name="excelFile" id="excelFile" accept=".xls, .xlsx">
+    <input type="submit" value="Upload">
+</form>
+<table>
+    <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Time of Last Update</th>
+    </tr>
+    {% for x in mappings %}
+        <tr>
+            <td>{{ x.title }}</td>
+            <td>{{ x.description }}</td>
+            <td>{{ x.last_updated }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+{% endblock content %}
