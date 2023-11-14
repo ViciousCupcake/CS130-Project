@@ -20,12 +20,5 @@
         <th>Description</th>
         <th>Time of Last Update</th>
     </tr>
-    {% for x in mappings %}
-        <tr>
-            <td>{{ x.title }}</td>
-            <td>{{ x.description }}</td>
-            <td>{{ x.last_updated }}</td>
-        </tr>
-    {% endfor %}
     </table>
 {% endblock content %}
