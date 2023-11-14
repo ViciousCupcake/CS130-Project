@@ -224,5 +224,5 @@ class UploadViewTest(TestCase):
         valid_excel = SimpleUploadedFile('valid.xlsx', excel_file.getvalue(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response = self.client.post('/upload/', {'excelFile': valid_excel})
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'app/success.html')
-        self.assertIn('num_rows', response.context)
+        self.assertTemplateUsed(response, 'app/upload_success.html')
+        self.assertIn('file_name', response.context)
