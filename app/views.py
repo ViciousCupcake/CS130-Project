@@ -1,8 +1,10 @@
 from django.shortcuts import render
-
 from django.contrib.auth.decorators import login_required
+from SPARQLWrapper import SPARQLWrapper, POST
 from .models import Mapping
 from .forms import MappingForm
+from .utils.parse_helpers import parse_excel
+import os
 import pandas as pd
 
 def index(request):
@@ -47,27 +49,6 @@ def modify_mapping(request, pk=None):
         else:
             return render(request, "app/modify.html", {'form': form})
 
-def upload(request):
-    if request.method == 'POST':
-        # Check if a file was uploaded
-        if 'excelFile' in request.FILES:
-            uploaded_file = request.FILES['excelFile']
-            if uploaded_file.name.endswith(('.xls', '.xlsx')):
-                df = pd.read_excel(uploaded_file)
-                num_rows = df.shape[0]
-                file_name = uploaded_file.name
-                file_content = uploaded_file.read()
-                return render(request, "app/success.html", {'num_rows': num_rows})
-            else:
-                return render(request, "app/upload.html", {'error': 'Invalid file format'})
-        else:
-            return render(request, "app/upload.html", {'error': 'No file found'})
-    elif request.method == 'GET':
-        mappings = Mapping.objects.all()
-        return render(request, "app/upload.html", {"mappings": mappings})
-    else:
-        return render(request, "app/upload.html", {"data": 'unresolved request'})
-
 @login_required
 def delete_mapping(request):
     """View that allows Administrative users to delete a mapping"""
@@ -75,3 +56,40 @@ def delete_mapping(request):
     mapping.delete()
     return render(request, "app/delete_success.html", {'mapping_title': mapping.title})
 
+def upload_to_fuseki(rdf_data):
+    """Uploaded parsed data (rdf data) to fuseki"""
+
+    sparql = SPARQLWrapper("http://fuseki:3030/mydataset/update")
+    # Set the credentials for authentication
+    sparql.setCredentials(os.getenv('FUSEKI_USER'), os.getenv('FUSEKI_PASSWORD'))
+    sparql.setMethod(POST)
+    sparql.setQuery(f"""
+    {rdf_data[0]}
+    INSERT DATA {{
+        {rdf_data[1]}
+    }}
+    """)
+    sparql.query()
+    
+def upload(request):
+    """ Upload and parse an excel sheet"""
+
+    if request.method == 'POST':
+        if 'excelFile' in request.FILES:
+            uploaded_file = request.FILES['excelFile']
+            if uploaded_file.name.endswith(('.xls', '.xlsx')):
+                file_name = uploaded_file.name
+                rdf_data = parse_excel(uploaded_file, file_name)
+                # mapping scheme could apply here later on
+                upload_to_fuseki(rdf_data)
+                return render(request, "app/upload_success.html", {'file_name': file_name})
+            else:
+                return render(request, "app/upload.html", {'error': 'Invalid file format: an .xls or .xlsx file is expected'})
+        else:
+            return render(request, "app/upload.html", {'error': 'No file uploaded'})
+    elif request.method == 'GET':
+        mappings = Mapping.objects.all()
+        return render(request, "app/upload.html", {"mappings": mappings})
+    else:
+        return render(request, "app/upload.html", {"data": 'unresolved request'})
+    

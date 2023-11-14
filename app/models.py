@@ -12,4 +12,3 @@ class Mapping(models.Model):
     fuseki_relations = models.JSONField() # Each relation is a list of 3 elements: [attribute1, relation, attribute2]; this is a JSON list of lists
     excel_format = models.JSONField()
     last_updated = models.DateTimeField(auto_now=True)
-    

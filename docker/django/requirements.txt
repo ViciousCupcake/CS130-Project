@@ -1,5 +1,8 @@
 Django>=4.0
 psycopg2>=2.8
 pandas>=1.3.3
+numpy>=1.21.2
+rdflib
+requests
 openpyxl>=2.6.0
 sparqlwrapper>=1.8.5
