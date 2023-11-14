@@ -9,4 +9,13 @@
     {{ form }}
     <button type="submit">Submit</button>
 </form>
+
+{% if pk %}
+    <form action="{% url 'delete' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="id" value="{{ pk }}">
+        <button type="submit">Delete?</button>
+    </form>
+{% endif %}
+
 {% endblock content %}
