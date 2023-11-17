@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Export Success!{% endblock title %}
+
+{% block content %}
+
+{% load static %} 
+<link rel="stylesheet" href="{% static 'app/export-success.css' %}">
+
+<p>Good news homies!!! We were able to successfully create the excel file using the mapping you picked!</p>
+<p>Here is the mapping you picked:</p>
+<table>
+    <tr>
+        <th>Title</th>
+        <th>Description</th> 
+        <th>Time of last update</th>
+    </tr>
+    <tr>
+        <td>{{ selected_mapping.title }}</td>
+        <td>{{ selected_mapping.description }}</td>
+        <td>{{ selected_mapping.last_updated }}</td>
+    </tr>
+</table>
+<p>Click this button to go to the html file:</p>
+<a href="{% url 'download_file' pk=file_pk %}" class="button">Download</a>
+
+{% endblock content %}

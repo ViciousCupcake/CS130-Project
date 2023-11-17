@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, HttpResponse
+from django.core.files.base import File
 from django.contrib.auth.decorators import login_required
 from SPARQLWrapper import SPARQLWrapper, POST
-from .models import Mapping
+from .models import Mapping, GeneratedExcelFile
 from .forms import MappingForm
 from .utils.parse_helpers import parse_excel
 import os
@@ -52,9 +53,13 @@ def modify_mapping(request, pk=None):
 @login_required
 def delete_mapping(request):
     """View that allows Administrative users to delete a mapping"""
-    mapping = Mapping.objects.get(pk=request.POST['id'])
-    mapping.delete()
-    return render(request, "app/delete_success.html", {'mapping_title': mapping.title})
+    if request.method == 'POST':
+        mapping = Mapping.objects.get(pk=request.POST['id'])
+        mapping.delete()
+        return render(request, "app/delete_success.html", {'mapping_title': mapping.title})
+    elif request.method == 'GET':
+        # Redirect to home page
+        return redirect('index')
 
 def upload_to_fuseki(rdf_data):
     """Uploaded parsed data (rdf data) to fuseki"""
@@ -77,6 +82,9 @@ def upload(request):
     if request.method == 'POST':
         if 'excelFile' in request.FILES:
             uploaded_file = request.FILES['excelFile']
+            selected_mapping_id = request.POST['mapping']
+            print(f"selected_mapping_id: {selected_mapping_id}")
+            selected_mapping = Mapping.objects.get(pk=selected_mapping_id)
             if uploaded_file.name.endswith(('.xls', '.xlsx')):
                 file_name = uploaded_file.name
                 rdf_data = parse_excel(uploaded_file, file_name)
@@ -92,4 +100,34 @@ def upload(request):
         return render(request, "app/upload.html", {"mappings": mappings})
     else:
         return render(request, "app/upload.html", {"data": 'unresolved request'})
+
+def download(request):
+    """Download an excel sheet"""
+
+    # If user is accessing this page for the first time,
+    # present the user with a list of mappings available.
+    if request.method == 'GET':
+        mappings = Mapping.objects.all()
+        return render(request, "app/download.html", {"mappings": mappings})
+    # If user has selected a mapping to download,
+    # do the logic to convert fuseki to excel and then allow user to download file
+    if request.method == 'POST':
+        selected_mapping_id = request.POST['mapping']
+        selected_mapping = Mapping.objects.get(pk=selected_mapping_id)
+        # TODO: convert fuseki to excel according to the selected mapping
+        # and then store it to a GeneratedExcelFile object, like so:
+        with open('/code/hello-world.xlsx', 'rb') as f:
+            file_model = GeneratedExcelFile(excel_file=File(f, name='hello-world.xlsx'))
+            print(f.read())
+            file_model.save()
+
+        return render(request, "app/export-success.html", {'file_pk': file_model.pk, 'selected_mapping': selected_mapping})
+
+def download_file(request, pk):
+    """Download a preexisting excel file"""
     
+    file_model = GeneratedExcelFile.objects.get(pk=pk)
+    file_name = file_model.excel_file.name.split('/')[-1]
+    response = HttpResponse(file_model.excel_file, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = f'attachment; filename={file_name}'
+    return response
