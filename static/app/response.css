@@ -1,0 +1,23 @@
+.confirmation-msg {
+    font-family: 'Inter', sans-serif;
+    text-align: center;
+    color:green;
+    -webkit-animation-name: fade-in;
+    -moz-animation-name: fade-in;
+    animation-name: fade-in;
+    -webkit-animation-duration: 0.5s;
+    -moz-animation-duration: 0.5s;
+    animation-duration: 0.5s;
+}
+
+.error-msg {
+    font-family: 'Inter', sans-serif;
+    text-align: center;
+    color:red;
+    -webkit-animation-name: fade-in;
+    -moz-animation-name: fade-in;
+    animation-name: fade-in;
+    -webkit-animation-duration: 0.5s;
+    -moz-animation-duration: 0.5s;
+    animation-duration: 0.5s;
+}

@@ -3,10 +3,17 @@
 {% block title %}Login{% endblock title %}
 
 {% block content %}
-    <h1>Login</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Log In</button>
-    </form>
+    <header class="page-header">
+        <div class="header-logo"> EFi </div>
+        <div class="header-link"><a href="/">Home</a></div>
+    </header>
+    <div class="registration-container">
+        <h1 class="registration-text">LOGIN</h1>
+        <form method="post" class="registration-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="shiny" type="submit">Log In</button>
+        </form>
+        <h3>Don't have an account? <a href="{% url 'register' %}">Register</a></h3>
+    </div>
 {% endblock content %}

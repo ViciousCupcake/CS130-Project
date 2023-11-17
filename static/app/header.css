@@ -1,0 +1,36 @@
+.page-header {
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 50px;
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+  background-color: #B1C0EA;
+  color: #394867;
+}
+
+/* Logo on header */
+.header-logo {
+  font-size: xx-large;
+  font-weight: bold;
+  justify-content: center;
+  padding-top: 5px;
+  padding-left: 20px;
+}
+
+/* Header button to go to home on Login page
+   Header button to log out if user is logged in */
+.header-link {
+  font-family: 'Inter', sans-serif;
+  margin-left: auto;
+  justify-content: center;
+  padding-top: 15px;
+  padding-right: 20px;
+}
+
+.header-link a {
+  text-decoration: none;
+  color: #394867;
+  padding: 10px;
+}

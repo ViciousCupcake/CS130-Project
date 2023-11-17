@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Download Mapping{% endblock title %}
+
+{% block content %}
+<header class="page-header">
+    <div class="header-logo">EFi</div>
+    <div class="header-link">
+        <a href="{% url 'index' %}">HOME</a>
+        <a href="{% url 'logout' %}">LOGOUT</a>
+    </div>
+</header>
+<h1 class="title">Download</h1>
+<h3>Please pick a mapping to query the database with.</h3>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="table-container">
+        <table>
+            <tr>
+                <th>Title</th>
+                <th>Description</th> 
+                <th>Time of last update</th>
+                <th></th>
+            </tr>
+            {% for x in mappings %}
+                <tr>
+                    <td>{{ x.title }}</td>
+                    <td>{{ x.description }}</td>
+                    <td>{{ x.last_updated }}</td>
+                    <td>
+                        <input type="radio" name="mapping" value="{{ x.id }}" />
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="center">    
+        <button class="shiny" type="submit">Submit</button>
+    </div>
+</form>
+<div class="center">
+    <a href="{% url 'index' %}"><button class="shiny">&laquo; Go back</button></a>
+</div>
+
+{% endblock content %}
