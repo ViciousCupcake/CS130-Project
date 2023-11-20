@@ -6,6 +6,7 @@ from . import views
 urlpatterns = [
     path("", views.index, name="index"),
     path("list/", views.list, name='list'),
+    path("upload/", views.upload, name="upload"),
 
     # This defines:
         # accounts/login/ [name='login']
@@ -24,8 +25,6 @@ urlpatterns = [
     path("select/", views.select_mapping, name="select"),
     path("modify/", views.modify_mapping, name="modify"),
     path("modify/<int:pk>/", views.modify_mapping, name="modify"),
-    path("export/", views.export_mapping, name="export"),
-    path("export/<int:pk>/", views.export_mapping, name="export"),
-    path("download/", views.download_excel, name="download"),
-    path("delete/", views.delete_mapping, name="delete")
+    path("upload/", views.upload, name="upload"),
+    path("delete/", views.delete_mapping, name="delete"),
 ]
