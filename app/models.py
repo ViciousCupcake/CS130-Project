@@ -12,3 +12,10 @@ class Mapping(models.Model):
     fuseki_relations = models.JSONField() # Each relation is a list of 3 elements: [attribute1, relation, attribute2]; this is a JSON list of lists
     excel_format = models.JSONField()
     last_updated = models.DateTimeField(auto_now=True)
+
+class GeneratedExcelFile(models.Model):
+    """
+    Represents a single generated excel file.
+    """
+    excel_file = models.FileField(upload_to='data/excel_files/')
+    last_updated = models.DateTimeField(auto_now=True)
