@@ -83,7 +83,6 @@ def upload(request):
         if 'excelFile' in request.FILES:
             uploaded_file = request.FILES['excelFile']
             selected_mapping_id = request.POST['mapping']
-            print(f"selected_mapping_id: {selected_mapping_id}")
             selected_mapping = Mapping.objects.get(pk=selected_mapping_id)
             if uploaded_file.name.endswith(('.xls', '.xlsx')):
                 file_name = uploaded_file.name

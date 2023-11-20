@@ -205,7 +205,8 @@ class UploadViewTest(TestCase):
 
     def test_invalid_file_type(self):
         invalid_format = SimpleUploadedFile('test.txt', b'this is invalid format', content_type='text/plain')
-        response = self.client.post('/upload/', {'excelFile': invalid_format})
+        m = Mapping.objects.create(title='test', description='test', fuseki_relations='[["test", "test", "test"]]', excel_format='{"test": "test"}')
+        response = self.client.post('/upload/', {'excelFile': invalid_format, 'mapping': m.pk})
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'app/upload.html')
         self.assertIn('error', response.context)
@@ -222,7 +223,8 @@ class UploadViewTest(TestCase):
         df.to_excel(excel_file, index=False)
         excel_file.seek(0)
         valid_excel = SimpleUploadedFile('valid.xlsx', excel_file.getvalue(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response = self.client.post('/upload/', {'excelFile': valid_excel})
+        m = Mapping.objects.create(title='test', description='test', fuseki_relations='[["test", "test", "test"]]', excel_format='{"test": "test"}')
+        response = self.client.post('/upload/', {'excelFile': valid_excel, 'mapping': m.pk})
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'app/upload_success.html')
         self.assertIn('file_name', response.context)
