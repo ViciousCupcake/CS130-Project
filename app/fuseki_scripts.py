@@ -1,7 +1,8 @@
-from SPARQLWrapper import SPARQLWrapper, JSON, POST
+from SPARQLWrapper import SPARQLWrapper, JSON, POST, GET
 from app.models import Mapping
 import pandas as pd
 from os import environ
+from cs130_efi.settings import FUSEKI_PREFIX
 
 fuseki_username = environ.get('FUSEKI_ADMIN_USER')
 fuseki_password = environ.get('FUSEKI_ADMIN_PASSWORD')
@@ -24,7 +25,7 @@ def create_sparql_graph(graph_name: str):
     sparql.setMethod(POST)
     
     sparql.setQuery("""
-        PREFIX : <http://example/>
+        PREFIX : """ + FUSEKI_PREFIX + """
         CREATE GRAPH :""" + graph_name + """
     """)
     _ = sparql.query()
@@ -38,7 +39,7 @@ def remove_sparql_graph(graph_name: str):
     sparql.setMethod(POST)
     
     sparql.setQuery("""
-        PREFIX : <http://example/>
+        PREFIX : """ + FUSEKI_PREFIX + """
         DROP GRAPH :""" + graph_name + """
     """)
     _ = sparql.query()
@@ -65,19 +66,86 @@ def insert_pandas_dataframe_into_sparql_graph(graph_name: str, relation_mapping_
     create_sparql_graph(graph_name)
     
     # Get the relations from the django model
-    relations_group = Mapping.objects.get(title=relation_mapping_name)
+    relations_group = Mapping.objects.get(title=relation_mapping_name, graph_name=graph_name)
     relations = relations_group.fuseki_relations
     
     # Insert the dataframe into the graph
     for index, row in dataframe.iterrows():
         row = row.to_dict()
         query = """
-            PREFIX : <http://example/>
+            PREFIX : """ + FUSEKI_PREFIX + """
             INSERT DATA { GRAPH :""" + graph_name + """ { """
-            
+
         for relation in relations:
-            query += ":" + row[relation[0]] + " :" + relation[1] + " :" + row[relation[2]] + " . "
+            query += ":" + str(row[relation[0]]) + " :" + relation[1] + " :" + str(row[relation[2]])+ " . "
         query += "} }"
         
         sparql.setQuery(query)
         _ = sparql.query()
+
+def fuseki_relations_to_sparql_response(map_relations, graph_name: str):
+    """
+    Converts fuseki_relations field of mapping model into a fuseki sparql query to retrieve
+    data from the knowledge base based on that data
+    
+    Preconditions:
+    - Relations is a JSON object
+
+    Postcondition:
+    - Return the response returned form the query
+    """
+
+    sparql = SPARQLWrapper("http://host.docker.internal:3030/mydataset/query")
+    sparql.setCredentials(fuseki_username, fuseki_password)
+    sparql.setMethod(POST)
+
+    # construct a list of column names
+    query_fields = set()
+    for relation in map_relations: # [["Test_Attribute_1", "Test_Relation", "Test_Attribute_2"]]
+        query_fields.add(relation[0])
+        query_fields.add(relation[2])
+    query_fields = "?"+ (" ?").join(query_fields)
+    
+    # add each relation to query
+    query = """
+            PREFIX : """ + FUSEKI_PREFIX + """
+            SELECT """ + query_fields +  """ 
+            WHERE { GRAPH :""" + graph_name + """ {
+                  """
+    
+    for relation in map_relations:
+        query += " ?" + relation[0] + " :" + relation[1] + " ?" + relation[2] + " ."
+    query += "} }"
+
+    # execute query
+    sparql.setReturnFormat(JSON)
+    sparql.setQuery(query)
+    result = sparql.query().convert()
+    return result
+
+def fuseki_response_to_DataFrame(response):
+    """
+    Converts fuseki response to a pandas DataFrame.
+
+    Preconditions:
+    - response is a response from fuseki
+    Postcondition:
+    - Return the converted DataFrame
+    """
+    
+    response = response["results"]["bindings"]
+    result = {}
+
+    # parse response row by row into dictionary
+    for data_row in response:
+        for attribute in data_row:
+            value = data_row[attribute]["value"][len(FUSEKI_PREFIX)-2:]
+            if attribute in result:
+                result[attribute].append(value)
+            else:
+                result[attribute] = [value]
+
+    headers = result.keys()
+    df = pd.DataFrame(result)
+
+    return (headers, df)

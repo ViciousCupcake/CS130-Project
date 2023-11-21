@@ -21,7 +21,22 @@
         <td>{{ selected_mapping.last_updated }}</td>
     </tr>
 </table>
-<p>Click this button to go to the html file:</p>
+<h1>Preview of Generated Excel</h1>
+<table>
+    <tr>
+      {% for header in df.columns %}
+        <th> {{header}} </th>
+      {% endfor %}
+    </tr>
+      {% for index, row in df.iterrows %}
+        <tr>
+          {% for ele in row %}
+            <td> {{ele}} </td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+  </table>
+
 <a href="{% url 'download_file' pk=file_pk %}" class="button">Download</a>
 
 {% endblock content %}

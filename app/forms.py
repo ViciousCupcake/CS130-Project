@@ -4,4 +4,4 @@ from app.models import Mapping
 class MappingForm(ModelForm):
     class Meta:
         model = Mapping
-        fields = ["title", "description", "fuseki_relations", "excel_format"]
+        fields = ["title", "graph_name", "description", "fuseki_relations", "excel_format"]
