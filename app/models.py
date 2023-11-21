@@ -8,6 +8,7 @@ class Mapping(models.Model):
     format for how excel should be specified.
     """
     title = models.CharField(max_length=255, db_index=True, unique=True)
+    graph_name = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
     fuseki_relations = models.JSONField() # Each relation is a list of 3 elements: [attribute1, relation, attribute2]; this is a JSON list of lists
     excel_format = models.JSONField()

@@ -21,10 +21,6 @@
                     {% csrf_token %}
                     <input type="submit" value="Modify">
                 </form>
-                <form action="{% url 'export' pk=x.id %}" method="get">
-                    {% csrf_token %}
-                    <input type="submit" value="Export">
-                </form>
             </td>
         </tr>
     {% endfor %}

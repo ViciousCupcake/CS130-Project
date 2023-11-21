@@ -2,10 +2,12 @@ from django.shortcuts import render, redirect, HttpResponse
 from django.core.files.base import File
 from django.contrib.auth.decorators import login_required
 from SPARQLWrapper import SPARQLWrapper, POST
+from app.fuseki_scripts import fuseki_relations_to_sparql_response, fuseki_response_to_DataFrame, insert_pandas_dataframe_into_sparql_graph
 from .models import Mapping, GeneratedExcelFile
 from .forms import MappingForm
 from .utils.parse_helpers import parse_excel
 import os
+from io import BytesIO
 import pandas as pd
 
 def index(request):
@@ -49,46 +51,6 @@ def modify_mapping(request, pk=None):
             return render(request, "app/save_success.html", {'mapping_title': form.cleaned_data['title']})
         else:
             return render(request, "app/modify.html", {'form': form})
-
-@login_required
-def export_mapping(request, pk=None):
-    """View that allows Administrative users to export a mapping into excel file and view it"""
-
-    # fetch the selected mapping
-    try:
-        mapping = Mapping.objects.get(pk=pk)
-    except Mapping.DoesNotExist:
-        return render(request, "app/export.html", {'mapping': None, 'data' : None})
-
-    # TODO: create dataframe from querying fuseki using the mapping to display in preview
-
-    # transform fuseki response into a pandas DataFrame
-    data = {
-        "X": [1,2,3,4, 5, 6, 7, 8, 9, 10],
-        "Y":[5,6,7, 8, 9, 10, 11, 12, 13, 14]
-    }
-    headers = data.keys()
-    df = pd.DataFrame(data)
-
-    # track the serialized data to download in a session variable
-    request.session["data_to_download"] = df.to_json()
-
-    return render(request, "app/export.html", {'mapping': mapping, 'headers': headers, "df":df})
-
-@login_required
-def download_excel(request):
-    """View that allows Administrative users to export a mapping into excel file and download it"""
-
-    # If user wants to export excel, return the excel as a response
-    if request.method == "POST":
-        df = pd.read_json(request.session["data_to_download"])
-        response = HttpResponse(content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = f'attachment; filename="excel_data.xlsx"'
-
-        with pd.ExcelWriter(response) as writer:
-            df.to_excel(writer, index=False)
-
-        return response
     
 def delete_mapping(request):
     """View that allows Administrative users to delete a mapping"""
@@ -120,14 +82,19 @@ def upload(request):
 
     if request.method == 'POST':
         if 'excelFile' in request.FILES:
+
+            # retrieve POST request information
             uploaded_file = request.FILES['excelFile']
             selected_mapping_id = request.POST['mapping']
             selected_mapping = Mapping.objects.get(pk=selected_mapping_id)
+            graph_name = selected_mapping.graph_name
+            selected_mapping_title = selected_mapping.title
+
+            # if valid file extension, upload file to knowledge base
             if uploaded_file.name.endswith(('.xls', '.xlsx')):
                 file_name = uploaded_file.name
-                rdf_data = parse_excel(uploaded_file, file_name)
-                # mapping scheme could apply here later on
-                upload_to_fuseki(rdf_data)
+                df = pd.read_excel(uploaded_file)
+                insert_pandas_dataframe_into_sparql_graph(graph_name, selected_mapping_title, df)
                 return render(request, "app/upload_success.html", {'file_name': file_name})
             else:
                 return render(request, "app/upload.html", {'error': 'Invalid file format: an .xls or .xlsx file is expected'})
@@ -147,19 +114,30 @@ def download(request):
     if request.method == 'GET':
         mappings = Mapping.objects.all()
         return render(request, "app/download.html", {"mappings": mappings})
+    
     # If user has selected a mapping to download,
-    # do the logic to convert fuseki to excel and then allow user to download file
+    # convert fuseki to excel and allow user to download file
     if request.method == 'POST':
         selected_mapping_id = request.POST['mapping']
         selected_mapping = Mapping.objects.get(pk=selected_mapping_id)
-        # TODO: convert fuseki to excel according to the selected mapping
-        # and then store it to a GeneratedExcelFile object, like so:
-        with open('/code/hello-world.xlsx', 'rb') as f:
-            file_model = GeneratedExcelFile(excel_file=File(f, name='hello-world.xlsx'))
-            print(f.read())
-            file_model.save()
 
-        return render(request, "app/export-success.html", {'file_pk': file_model.pk, 'selected_mapping': selected_mapping})
+        # query fuseki with mapping to create dataframe
+        relations, graph_name = selected_mapping.fuseki_relations, selected_mapping.graph_name
+        fuseki_response = fuseki_relations_to_sparql_response(relations, graph_name)
+        headers, df = fuseki_response_to_DataFrame(fuseki_response)
+
+        # convert dataframe to excel in memory
+        file_name='excel_data.xlsx'
+        in_memory_file = BytesIO()
+        df.to_excel(in_memory_file, index=False)
+        in_memory_file.seek(0, 0)
+        excel_file_obj = File(in_memory_file,  name=file_name)
+
+        # save excel in memory to GeneratedExcelFile obj in Django
+        file_model = GeneratedExcelFile(excel_file=excel_file_obj)
+        file_model.save()
+
+        return render(request, "app/export-success.html", {'file_pk': file_model.pk, 'selected_mapping': selected_mapping, 'df':df, 'headers':headers})
 
 def download_file(request, pk):
     """Download a preexisting excel file"""
