@@ -1,10 +1,13 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from django.http import HttpRequest
+from django.urls import reverse
 from .models import Mapping
 from .forms import MappingForm
 from .utils.parse_helpers import parse_excel
 from .views import upload_to_fuseki
+from .views import search_mappings
 from unittest.mock import patch, MagicMock
 from SPARQLWrapper import SPARQLWrapper, JSON
 import app.fuseki_scripts as fs
@@ -34,7 +37,18 @@ class EFITestCase(TestCase):
         self.assertEqual(saved_mapping.description, "Test description")
         self.assertEqual(saved_mapping.fuseki_relations, [["Test Attribute 1", "Test Relation", "Test Attribute 2"]])
         self.assertEqual(saved_mapping.excel_format, {"test": "format"})
+    
+    def test_search_mappings(self):
+        mapping = Mapping(
+            title="Test Mapping",
+            graph_name="Test_Graph",
+            description="Test description",
+            fuseki_relations=[["Test Attribute 1", "Test Relation", "Test Attribute 2"]],
+            excel_format={"test": "format"},
+        )
+        mapping.save()
         
+
     # def test_create_sparql_graph(self):
     #     """Test creating a sparql graph."""
     #     fs.create_sparql_graph("Test_Graph")
@@ -235,6 +249,52 @@ class EFITestCase(TestCase):
         assert(sorted(result["Test_Attribute_2"]) == ['5', '6', '7', '8'])
         assert(sorted(result["Test_Attribute_1"]) == ['1', '2', '3', '4'])
         assert(sorted(result["Test_Attribute_3"]) == ['10', '11', '12', '9'])
+
+    def test_search_mappings(self):
+        """Test search_mappings"""
+
+        mapping = Mapping(
+            title="Test Mapping",
+            graph_name="Test_Graph",
+            description="Test description",
+            fuseki_relations=[["Test Attribute 1", "Test Relation", "Test Attribute 2"]],
+            excel_format={"test": "format"},
+        )
+        mapping.save()
+
+        request = HttpRequest()
+        # Simulate a GET request with a query parameter
+        request.GET = {'q': 'Test Mapping'}
+        mappings = search_mappings(request)
+
+        self.assertTrue(len(mappings) > 0)
+
+    def test_visualize_mapping(self):
+        """Test visualize_mapping with GET and POST requests"""
+        
+        mapping = Mapping(
+            title="Test Mapping",
+            graph_name="Test_Graph",
+            description="Test description",
+            fuseki_relations=[["Test Attribute 1", "Test Relation", "Test Attribute 2"]],
+            excel_format={"test": "format"},
+        )
+        mapping.save()
+        # GET request
+        response_get = self.client.get(reverse('visualize_mapping'))
+        self.assertEqual(response_get.status_code, 200)
+        self.assertTemplateUsed(response_get, 'app/visualize_mapping.html')
+
+        # POST request - success
+        response_post_success = self.client.post(reverse('visualize_mapping'), {'mappingTitle': 'Test Mapping'})
+        self.assertEqual(response_post_success.status_code, 200)
+        self.assertTemplateUsed(response_post_success, 'app/visualization_result.html')
+
+        # POST request - failure (mapping not found)
+        response_post_failure = self.client.post(reverse('visualize_mapping'), {'mappingTitle': 'Nonexistent Mapping'})
+        self.assertEqual(response_post_failure.status_code, 200)
+        self.assertTemplateUsed(response_post_failure, 'app/visualize_mapping.html')
+        self.assertIn('error', response_post_failure.context)
 
 class UploadViewTest(TestCase):
     def setUp(self):

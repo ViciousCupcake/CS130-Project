@@ -9,3 +9,5 @@ rdflib
 requests
 openpyxl>=2.6.0
 sparqlwrapper>=1.8.5
+networkx
+matplotlib

@@ -27,6 +27,7 @@ urlpatterns = [
     path("modify/", views.modify_mapping, name="modify"), # Page that allows users to create a mapping
     path("modify/<int:pk>/", views.modify_mapping, name="modify"), # Page that allows users to modify a preexisting mapping
     path("delete/", views.delete_mapping, name="delete"), # API endpoint that allows users to delete a mapping. This page cannot be accessed directly.
+    path("visualize/", views.visualize_mapping, name='visualize_mapping'),
 
     # API endpoints that allow users to download excel files
     path("download/<int:pk>/", views.download_file, name="download_file"), # API endpoint that allows users to download a preexisting excel file
