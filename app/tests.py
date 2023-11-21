@@ -100,7 +100,7 @@ class EFITestCase(TestCase):
         """Test that a model can be deleted."""
 
         # Create admin user
-        user = User.objects.create_user(username='admin', password='admin')
+        user = User.objects.create_superuser(username='admin', password='admin')
 
         client = Client()
         client.login(username='admin', password='admin')
