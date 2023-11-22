@@ -37,17 +37,6 @@ class EFITestCase(TestCase):
         self.assertEqual(saved_mapping.description, "Test description")
         self.assertEqual(saved_mapping.fuseki_relations, [["Test Attribute 1", "Test Relation", "Test Attribute 2"]])
         self.assertEqual(saved_mapping.excel_format, {"test": "format"})
-    
-    def test_search_mappings(self):
-        mapping = Mapping(
-            title="Test Mapping",
-            graph_name="Test_Graph",
-            description="Test description",
-            fuseki_relations=[["Test Attribute 1", "Test Relation", "Test Attribute 2"]],
-            excel_format={"test": "format"},
-        )
-        mapping.save()
-        
 
     # def test_create_sparql_graph(self):
     #     """Test creating a sparql graph."""
@@ -268,6 +257,7 @@ class EFITestCase(TestCase):
         mappings = search_mappings(request)
 
         self.assertTrue(len(mappings) > 0)
+        self.assertEqual(mappings[0].title, mapping.title)
 
     def test_visualize_mapping(self):
         """Test visualize_mapping with GET and POST requests"""
