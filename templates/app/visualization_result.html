@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <h2>Mapping Visualization</h2>
+    {% if image_path %}
+        <img src="{% static image_path %}" alt="Mapping Visualization">
+    {% else %}
+        <p>Visualization not available.</p>
+    {% endif %}
+{% endblock %}

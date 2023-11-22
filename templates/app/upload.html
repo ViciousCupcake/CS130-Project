@@ -7,11 +7,24 @@
 {% load static %} 
 <link rel="stylesheet" href="{% static 'app/style.css' %}">
 
+<h2>Search for a Mapping</h2>
+<form method="get" action=".">  <!-- action set to the current URL -->
+    <input type="text" name="q" placeholder="Search mappings..." value="{{ query }}">
+    <button type="submit">Search</button>
+</form>
+
+<!-- Button linking to the visualize_mapping page -->
+<a href="{% url 'visualize_mapping' %}" class="btn btn-primary">Visualize a Mapping</a>
+
 <h2>Upload an Excel File</h2>
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <label for="excelFile">Select an Excel file:</label>
     <input type="file" name="excelFile" id="excelFile" accept=".xls, .xlsx">
+    <input type="submit" value="Upload">
+</form>
+
+{% if mappings %}
     <table>
         <tr>
             <th>Title</th>
@@ -22,15 +35,17 @@
         {% for x in mappings %}
             <tr>
                 <td>{{ x.title }}</td>
-                <td>{{ x.graph_name }}</td>
                 <td>{{ x.description }}</td>
                 <td>{{ x.last_updated }}</td>
                 <td>
-                    <input type="radio" id="mapping" name="mapping" value="{{ x.id }}">
+                    <input type="radio" id="mapping{{ forloop.counter }}" name="mapping" value="{{ x.id }}">
+                    <label for="mapping{{ forloop.counter }}">{{ x.graph_name }}</label>
                 </td>
             </tr>
         {% endfor %}
     </table>
-    <input type="submit" value="Upload">
-</form>
+{% else %}
+    <p>No mappings found.</p>
+{% endif %}
+
 {% endblock content %}
