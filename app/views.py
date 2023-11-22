@@ -9,6 +9,13 @@ from .utils.visual_helpers import visualize_relations
 import os
 from io import BytesIO
 import pandas as pd
+from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required, user_passes_test
+
+def is_admin(user):
+    return user.is_authenticated and user.is_superuser
 
 def index(request):
     return render(request, "app/index.html", {'data': 'Hello, world!'})
@@ -52,6 +59,7 @@ def visualize_mapping(request):
     return render(request, 'app/visualize_mapping.html')
 
 @login_required
+@user_passes_test(is_admin)
 def select_mapping(request):
     """View that allows Administrative users to pick a mapping to modify"""
     if request.method == 'GET':
@@ -59,6 +67,7 @@ def select_mapping(request):
         return render(request, "app/select_mapping.html", {'mappings': mappings})
 
 @login_required
+@user_passes_test(is_admin)
 def modify_mapping(request, pk=None):
     """View that allows Administrative users to modify a mapping"""
 
@@ -85,7 +94,9 @@ def modify_mapping(request, pk=None):
             return render(request, "app/save_success.html", {'mapping_title': form.cleaned_data['title']})
         else:
             return render(request, "app/modify.html", {'form': form})
-    
+
+@login_required
+@user_passes_test(is_admin)  
 def delete_mapping(request):
     """View that allows Administrative users to delete a mapping"""
     if request.method == 'POST':
@@ -181,3 +192,15 @@ def download_file(request, pk):
     response = HttpResponse(file_model.excel_file, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = f'attachment; filename={file_name}'
     return response
+
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('index') 
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/register.html', {'form': form})

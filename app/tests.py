@@ -15,6 +15,7 @@ import pandas as pd
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from io import BytesIO
+from django.urls import reverse
 
 
 class EFITestCase(TestCase):
@@ -102,7 +103,7 @@ class EFITestCase(TestCase):
         """Test that a model can be deleted."""
 
         # Create admin user
-        user = User.objects.create_user(username='admin', password='admin')
+        user = User.objects.create_superuser(username='admin', password='admin')
 
         client = Client()
         client.login(username='admin', password='admin')
@@ -326,3 +327,46 @@ class UploadViewTest(TestCase):
     #     self.assertEqual(response.status_code, 200)
     #     self.assertTemplateUsed(response, 'app/upload_success.html')
     #     self.assertIn('file_name', response.context)
+
+
+class RegistrationSystemTests(TestCase):
+
+    def setUp(self):
+        self.admin_user = User.objects.create_superuser(username='adminuser', password='adminpassword')
+        self.normal_user = User.objects.create_user(username='normaluser', password='password123')
+
+    def test_register_page_access(self):
+        response = self.client.get(reverse('register'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_user_registration(self):
+        user_data = {
+            'username': 'testuser',
+            'password1': 'some_strong_psw',
+            'password2': 'some_strong_psw'
+        }
+        response = self.client.post(reverse('register'), user_data)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(User.objects.filter(username='testuser').exists())
+        user = User.objects.get(username='testuser')
+        self.assertFalse(user.is_superuser)
+
+    def test_normal_user_role(self):
+        self.client.login(username='normaluser', password='password123')
+        response = self.client.get(reverse('index'))  # Redirect back to index.html 
+        self.assertNotIn('You are an admin!', response.content.decode())
+
+    def test_admin_user_role(self):
+        self.client.login(username='adminuser', password='adminpassword')
+        response = self.client.get(reverse('index'))
+        self.assertIn('You are an admin', response.content.decode())
+
+    def test_modify_page_access_by_normal_user(self):
+        self.client.login(username='normaluser', password='password123')
+        response = self.client.get(reverse('modify'))
+        self.assertNotEqual(response.status_code, 200)
+
+    def test_modify_page_access_by_admin(self):
+        self.client.login(username='adminuser', password='adminpassword')
+        response = self.client.get(reverse('modify'))
+        self.assertEqual(response.status_code, 200)
