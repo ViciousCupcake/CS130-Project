@@ -298,6 +298,8 @@ class RegistrationSystemTests(TestCase):
         response = self.client.post(reverse('register'), user_data)
         self.assertEqual(response.status_code, 302)
         self.assertTrue(User.objects.filter(username='testuser').exists())
+        user = User.objects.get(username='testuser')
+        self.assertFalse(user.is_superuser)
 
     def test_normal_user_role(self):
         self.client.login(username='normaluser', password='password123')
