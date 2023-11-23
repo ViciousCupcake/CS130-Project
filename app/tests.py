@@ -44,7 +44,7 @@ class EFITestCase(TestCase):
         """Test creating a sparql graph."""
         fs.create_sparql_graph("Test_Graph")
 
-        sparql = SPARQLWrapper("http://host.docker.internal:3030/mydataset/query")
+        sparql = SPARQLWrapper("http://127.0.0.1:3030/mydataset/query")
         sparql.setCredentials("admin", "postgres")
         sparql.setReturnFormat(JSON)
         sparql.setQuery("""
@@ -66,7 +66,7 @@ class EFITestCase(TestCase):
         fs.create_sparql_graph("Test_Graph")
         fs.remove_sparql_graph("Test_Graph")
 
-        sparql = SPARQLWrapper("http://host.docker.internal:3030/mydataset/query")
+        sparql = SPARQLWrapper("http://127.0.0.1:3030/mydataset/query")
         sparql.setCredentials("admin", "postgres")
         sparql.setReturnFormat(JSON)
         sparql.setQuery("""

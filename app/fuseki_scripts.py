@@ -20,7 +20,7 @@ def create_sparql_graph(graph_name: str):
     """
     Creates a sparql graph which adheres to the relations in the schema
     """
-    sparql = SPARQLWrapper("http://host.docker.internal:3030/mydataset/update")
+    sparql = SPARQLWrapper("http://127.0.0.1:3030/mydataset/update")
     sparql.setCredentials(fuseki_username, fuseki_password)
     sparql.setMethod(POST)
     
@@ -34,7 +34,7 @@ def remove_sparql_graph(graph_name: str):
     """
     Removes a sparql graph
     """
-    sparql = SPARQLWrapper("http://host.docker.internal:3030/mydataset/update")
+    sparql = SPARQLWrapper("http://127.0.0.1:3030/mydataset/update")
     sparql.setCredentials(fuseki_username, fuseki_password)
     sparql.setMethod(POST)
     
@@ -58,7 +58,7 @@ def insert_pandas_dataframe_into_sparql_graph(graph_name: str, relation_mapping_
     Postconditions:
     - The dataframe is inserted into the sparql graph
     """
-    sparql = SPARQLWrapper("http://host.docker.internal:3030/mydataset/update")
+    sparql = SPARQLWrapper("http://127.0.0.1:3030/mydataset/update")
     sparql.setCredentials(fuseki_username, fuseki_password)
     sparql.setMethod(POST)
     
@@ -95,7 +95,7 @@ def fuseki_relations_to_sparql_response(map_relations, graph_name: str):
     - Return the response returned form the query
     """
 
-    sparql = SPARQLWrapper("http://host.docker.internal:3030/mydataset/query")
+    sparql = SPARQLWrapper("http://127.0.0.1:3030/mydataset/query")
     sparql.setCredentials(fuseki_username, fuseki_password)
     sparql.setMethod(POST)
 
