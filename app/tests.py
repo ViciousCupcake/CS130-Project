@@ -1,10 +1,13 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from django.http import HttpRequest
+from django.urls import reverse
 from .models import Mapping
 from .forms import MappingForm
 from .utils.parse_helpers import parse_excel
 from .views import upload_to_fuseki
+from .views import search_mappings
 from unittest.mock import patch, MagicMock
 from SPARQLWrapper import SPARQLWrapper, JSON
 import app.fuseki_scripts as fs
@@ -13,6 +16,7 @@ from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from io import BytesIO
 import os
+from django.urls import reverse
 
 
 class EFITestCase(TestCase):
@@ -100,7 +104,7 @@ class EFITestCase(TestCase):
         """Test that a model can be deleted."""
 
         # Create admin user
-        user = User.objects.create_user(username='admin', password='admin')
+        user = User.objects.create_superuser(username='admin', password='admin')
 
         client = Client()
         client.login(username='admin', password='admin')
@@ -237,6 +241,53 @@ class EFITestCase(TestCase):
         assert(sorted(result["Test_Attribute_1"]) == ['1', '2', '3', '4'])
         assert(sorted(result["Test_Attribute_3"]) == ['10', '11', '12', '9'])
 
+    def test_search_mappings(self):
+        """Test search_mappings"""
+
+        mapping = Mapping(
+            title="Test Mapping",
+            graph_name="Test_Graph",
+            description="Test description",
+            fuseki_relations=[["Test Attribute 1", "Test Relation", "Test Attribute 2"]],
+            excel_format={"test": "format"},
+        )
+        mapping.save()
+
+        request = HttpRequest()
+        # Simulate a GET request with a query parameter
+        request.GET = {'q': 'Test Mapping'}
+        mappings = search_mappings(request)
+
+        self.assertTrue(len(mappings) > 0)
+        self.assertEqual(mappings[0].title, mapping.title)
+
+    def test_visualize_mapping(self):
+        """Test visualize_mapping with GET and POST requests"""
+        
+        mapping = Mapping(
+            title="Test Mapping",
+            graph_name="Test_Graph",
+            description="Test description",
+            fuseki_relations=[["Test Attribute 1", "Test Relation", "Test Attribute 2"]],
+            excel_format={"test": "format"},
+        )
+        mapping.save()
+        # GET request
+        response_get = self.client.get(reverse('visualize_mapping'))
+        self.assertEqual(response_get.status_code, 200)
+        self.assertTemplateUsed(response_get, 'app/visualize_mapping.html')
+
+        # POST request - success
+        response_post_success = self.client.post(reverse('visualize_mapping'), {'mappingTitle': 'Test Mapping'})
+        self.assertEqual(response_post_success.status_code, 200)
+        self.assertTemplateUsed(response_post_success, 'app/visualization_result.html')
+
+        # POST request - failure (mapping not found)
+        response_post_failure = self.client.post(reverse('visualize_mapping'), {'mappingTitle': 'Nonexistent Mapping'})
+        self.assertEqual(response_post_failure.status_code, 200)
+        self.assertTemplateUsed(response_post_failure, 'app/visualize_mapping.html')
+        self.assertIn('error', response_post_failure.context)
+
 class UploadViewTest(TestCase):
     def setUp(self):
         self.client = Client()
@@ -278,4 +329,45 @@ class UploadViewTest(TestCase):
         self.assertTemplateUsed(response, 'app/upload_success.html')
         self.assertIn('file_name', response.context)
         os.remove('valid.xlsx')
-        
+
+class RegistrationSystemTests(TestCase):
+
+    def setUp(self):
+        self.admin_user = User.objects.create_superuser(username='adminuser', password='adminpassword')
+        self.normal_user = User.objects.create_user(username='normaluser', password='password123')
+
+    def test_register_page_access(self):
+        response = self.client.get(reverse('register'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_user_registration(self):
+        user_data = {
+            'username': 'testuser',
+            'password1': 'some_strong_psw',
+            'password2': 'some_strong_psw'
+        }
+        response = self.client.post(reverse('register'), user_data)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(User.objects.filter(username='testuser').exists())
+        user = User.objects.get(username='testuser')
+        self.assertFalse(user.is_superuser)
+
+    def test_normal_user_role(self):
+        self.client.login(username='normaluser', password='password123')
+        response = self.client.get(reverse('index'))  # Redirect back to index.html 
+        self.assertNotIn('You are an admin!', response.content.decode())
+
+    def test_admin_user_role(self):
+        self.client.login(username='adminuser', password='adminpassword')
+        response = self.client.get(reverse('index'))
+        self.assertIn('You are an admin', response.content.decode())
+
+    def test_modify_page_access_by_normal_user(self):
+        self.client.login(username='normaluser', password='password123')
+        response = self.client.get(reverse('modify'))
+        self.assertNotEqual(response.status_code, 200)
+
+    def test_modify_page_access_by_admin(self):
+        self.client.login(username='adminuser', password='adminpassword')
+        response = self.client.get(reverse('modify'))
+        self.assertEqual(response.status_code, 200)

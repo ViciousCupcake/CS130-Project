@@ -5,10 +5,14 @@
 {% block content %}
     <p>Received {{ data }} from backend.</p>
     {% if user.is_authenticated %}
+        Welcome, {{ user.username }}! 
+        {% if user.is_superuser %}
         You are an admin, authenticated with username: {{ user.username }}!
+        {% endif %}
         <p><a href="{% url 'logout' %}">Log Out</a></p>
     {% else %}
-        <p>Want to log in?</p>
-        <a href="{% url 'login' %}">Log In</a>
+        <p>Want to log in or register?</p>
+        <a href="{% url 'login' %}">Log In</a> |
+        <a href="{% url 'register' %}">Register</a>
     {% endif %}
 {% endblock content %}

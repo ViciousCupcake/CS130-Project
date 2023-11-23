@@ -5,10 +5,17 @@ from SPARQLWrapper import SPARQLWrapper, POST
 from app.fuseki_scripts import fuseki_relations_to_sparql_response, fuseki_response_to_DataFrame, insert_pandas_dataframe_into_sparql_graph
 from .models import Mapping, GeneratedExcelFile
 from .forms import MappingForm
-from .utils.parse_helpers import parse_excel
+from .utils.visual_helpers import visualize_relations
 import os
 from io import BytesIO
 import pandas as pd
+from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required, user_passes_test
+
+def is_admin(user):
+    return user.is_authenticated and user.is_superuser
 
 def index(request):
     return render(request, "app/index.html", {'data': 'Hello, world!'})
@@ -17,7 +24,42 @@ def list(request):
     mappings = Mapping.objects.all()
     return render(request, "app/list.html", {"mappings": mappings})
 
+def search_mappings(request):
+    """Allows users to search for a mapping"""
+
+    query = request.GET.get('q', '')
+    if query:
+        mappings = Mapping.objects.filter(title__icontains=query)
+    else:
+        mappings = Mapping.objects.all()
+
+    return mappings
+
+def visualize_mapping(request):
+    """Visualize a mapping based on user input"""
+
+    if request.method == 'POST':
+        mapping_title = request.POST.get('mappingTitle')
+
+        # Query the Mapping model to get the desired mapping
+        try:
+            mapping = Mapping.objects.get(title=mapping_title)
+            relations = mapping.fuseki_relations
+
+            # Visualize the mapping and save it as an image
+            visualize_relations(relations, 'static/images/my_graph.png')
+
+            return render(request, 'app/visualization_result.html', {'image_path': 'images/my_graph.png'})
+
+        except Mapping.DoesNotExist:
+            # Handle the case where the mapping does not exist
+            return render(request, 'app/visualize_mapping.html', {'error': 'Mapping not found'})
+
+    # For a GET request, just render the form
+    return render(request, 'app/visualize_mapping.html')
+
 @login_required
+@user_passes_test(is_admin)
 def select_mapping(request):
     """View that allows Administrative users to pick a mapping to modify"""
     if request.method == 'GET':
@@ -25,6 +67,7 @@ def select_mapping(request):
         return render(request, "app/select_mapping.html", {'mappings': mappings})
 
 @login_required
+@user_passes_test(is_admin)
 def modify_mapping(request, pk=None):
     """View that allows Administrative users to modify a mapping"""
 
@@ -51,7 +94,9 @@ def modify_mapping(request, pk=None):
             return render(request, "app/save_success.html", {'mapping_title': form.cleaned_data['title']})
         else:
             return render(request, "app/modify.html", {'form': form})
-    
+
+@login_required
+@user_passes_test(is_admin)  
 def delete_mapping(request):
     """View that allows Administrative users to delete a mapping"""
     if request.method == 'POST':
@@ -101,7 +146,7 @@ def upload(request):
         else:
             return render(request, "app/upload.html", {'error': 'No file uploaded'})
     elif request.method == 'GET':
-        mappings = Mapping.objects.all()
+        mappings = search_mappings(request)
         return render(request, "app/upload.html", {"mappings": mappings})
     else:
         return render(request, "app/upload.html", {"data": 'unresolved request'})
@@ -147,3 +192,15 @@ def download_file(request, pk):
     response = HttpResponse(file_model.excel_file, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = f'attachment; filename={file_name}'
     return response
+
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('index') 
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/register.html', {'form': form})

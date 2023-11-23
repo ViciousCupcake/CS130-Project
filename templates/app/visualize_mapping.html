@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Visualize Mapping</h2>
+    <form method="post" action="{% url 'visualize_mapping' %}">
+        {% csrf_token %}
+        <label for="mappingTitle">Enter the Title of the Mapping:</label>
+        <input type="text" id="mappingTitle" name="mappingTitle" required>
+        <button type="submit">Visualize</button>
+    </form>
+{% endblock %}
