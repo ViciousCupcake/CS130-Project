@@ -9,7 +9,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-22.04
-    container: python:3
 
     steps:
       # need checkout before using docker-compose-action
