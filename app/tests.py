@@ -328,7 +328,6 @@ class UploadViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'app/upload_success.html')
         self.assertIn('file_name', response.context)
-        os.remove('valid.xlsx')
 
 class RegistrationSystemTests(TestCase):
 
