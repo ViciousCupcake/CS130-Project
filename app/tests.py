@@ -12,6 +12,7 @@ import pandas as pd
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from io import BytesIO
+import os
 
 
 class EFITestCase(TestCase):
@@ -192,36 +193,36 @@ class EFITestCase(TestCase):
             self.assertEqual(expected_prefixes.strip(), prefixes.strip())
             self.assertEqual(expected_triples.strip(), triples.strip())
 
-    # def test_fuseki_relations_to_sparql_response(self):
-    #     """Test fuseki_relations_to_sparql_response function that takes in a mapping and returns the response"""
+    def test_fuseki_relations_to_sparql_response(self):
+        """Test fuseki_relations_to_sparql_response function that takes in a mapping and returns the response"""
 
-    #     fs.create_sparql_graph("Test_Graph")
+        fs.create_sparql_graph("Test_Graph")
         
-    #     # Create Mapping object
-    #     mapping_relations = [["Test_Attribute_1", "Test_Relation1", "Test_Attribute_2"], 
-    #                          ["Test_Attribute_1", "Test_Relation2", "Test_Attribute_3"],
-    #                     ["Test_Attribute_2", "Test_Relation3", "Test_Attribute_3"]]
+        # Create Mapping object
+        mapping_relations = [["Test_Attribute_1", "Test_Relation1", "Test_Attribute_2"], 
+                             ["Test_Attribute_1", "Test_Relation2", "Test_Attribute_3"],
+                        ["Test_Attribute_2", "Test_Relation3", "Test_Attribute_3"]]
         
-    #     mapping = Mapping(
-    #         title="Test Mapping",
-    #         graph_name="Test_Graph",
-    #         description="Test description",
-    #         fuseki_relations=mapping_relations,
-    #         excel_format={"test": "format"}
-    #     )
-    #     mapping.save()
+        mapping = Mapping(
+            title="Test Mapping",
+            graph_name="Test_Graph",
+            description="Test description",
+            fuseki_relations=mapping_relations,
+            excel_format={"test": "format"}
+        )
+        mapping.save()
 
-    #     # insert some fake data
-    #     data = {"Test_Attribute_1": ["1", "2", "1", "4"], "Test_Attribute_2": ["5", "6", "7", "8"], "Test_Attribute_3": ["9", "10", "11", "12"]}
-    #     df = pd.DataFrame(data)
-    #     fs.insert_pandas_dataframe_into_sparql_graph("Test_Graph", "Test Mapping", df)
+        # insert some fake data
+        data = {"Test_Attribute_1": ["1", "2", "1", "4"], "Test_Attribute_2": ["5", "6", "7", "8"], "Test_Attribute_3": ["9", "10", "11", "12"]}
+        df = pd.DataFrame(data)
+        fs.insert_pandas_dataframe_into_sparql_graph("Test_Graph", "Test Mapping", df)
 
-    #     # obtain response
-    #     response = fs.fuseki_relations_to_sparql_response(mapping.fuseki_relations, "Test_Graph")
-    #     valid_cols = set({"Test_Attribute_2", "Test_Attribute_3", "Test_Attribute_1"})
-    #     assert(len(response["results"]["bindings"]) != 0)
-    #     for key in response["results"]["bindings"][0]:
-    #         assert(key in valid_cols)
+        # obtain response
+        response = fs.fuseki_relations_to_sparql_response(mapping.fuseki_relations, "Test_Graph")
+        valid_cols = set({"Test_Attribute_2", "Test_Attribute_3", "Test_Attribute_1"})
+        assert(len(response["results"]["bindings"]) != 0)
+        for key in response["results"]["bindings"][0]:
+            assert(key in valid_cols)
 
     def test_fuseki_response_to_DataFrame(self):
         """Test fuseki_response_to_DataFrame function that takes in a fueski response and returns a DataFrame"""
@@ -265,14 +266,16 @@ class UploadViewTest(TestCase):
         self.assertTemplateUsed(response, 'app/upload.html')
         self.assertIn('data', response.context)
         
-    # def test_valid_post_request(self):
-    #     df = pd.DataFrame({'Data1': [1, 2, 3], 'Data2': [5, 6, 7]})
-    #     excel_file = BytesIO()
-    #     df.to_excel(excel_file)
-    #     excel_file.seek(0)
-    #     valid_excel = SimpleUploadedFile('valid.xlsx', excel_file.getvalue(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    #     m = Mapping.objects.create(title='test', description='test', graph_name='Test_Upload_POST', fuseki_relations=[["Data1", "test", "Data2"]], excel_format='{"test": "test"}')
-    #     response = self.client.post('/upload/', {'excelFile': valid_excel, 'mapping': m.pk})
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'app/upload_success.html')
-    #     self.assertIn('file_name', response.context)
+    def test_valid_post_request(self):
+        df = pd.DataFrame({'Data1': [1, 2, 3], 'Data2': [5, 6, 7]})
+        excel_file = BytesIO()
+        df.to_excel(excel_file)
+        excel_file.seek(0)
+        valid_excel = SimpleUploadedFile('valid.xlsx', excel_file.getvalue(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        m = Mapping.objects.create(title='test', description='test', graph_name='Test_Upload_POST', fuseki_relations=[["Data1", "test", "Data2"]], excel_format='{"test": "test"}')
+        response = self.client.post('/upload/', {'excelFile': valid_excel, 'mapping': m.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'app/upload_success.html')
+        self.assertIn('file_name', response.context)
+        os.remove('valid.xlsx')
+        
