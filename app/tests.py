@@ -35,46 +35,46 @@ class EFITestCase(TestCase):
         self.assertEqual(saved_mapping.fuseki_relations, [["Test Attribute 1", "Test Relation", "Test Attribute 2"]])
         self.assertEqual(saved_mapping.excel_format, {"test": "format"})
         
-    # def test_create_sparql_graph(self):
-    #     """Test creating a sparql graph."""
-    #     fs.create_sparql_graph("Test_Graph")
+    def test_create_sparql_graph(self):
+        """Test creating a sparql graph."""
+        fs.create_sparql_graph("Test_Graph")
 
-    #     sparql = SPARQLWrapper("http://host.docker.internal:3030/mydataset/query")
-    #     sparql.setCredentials("admin", "postgres")
-    #     sparql.setReturnFormat(JSON)
-    #     sparql.setQuery("""
-    #         PREFIX : """ + FUSEKI_PREFIX + """
-    #         SELECT ?s ?p ?o
-    #         WHERE {
-    #             GRAPH :Test_Graph {
-    #                 ?s ?p ?o
-    #             }
-    #         }
-    #     """)
-    #     results = sparql.query().convert()
-    #     self.assertEqual(len(results["results"]["bindings"]), 0)
+        sparql = SPARQLWrapper("http://host.docker.internal:3030/mydataset/query")
+        sparql.setCredentials("admin", "postgres")
+        sparql.setReturnFormat(JSON)
+        sparql.setQuery("""
+            PREFIX : """ + fs.FUSEKI_PREFIX + """
+            SELECT ?s ?p ?o
+            WHERE {
+                GRAPH :Test_Graph {
+                    ?s ?p ?o
+                }
+            }
+        """)
+        results = sparql.query().convert()
+        self.assertEqual(len(results["results"]["bindings"]), 0)
         
-    #     fs.remove_sparql_graph("Test_Graph")
+        fs.remove_sparql_graph("Test_Graph")
         
-    # def test_remove_sparql_graph(self):
-    #     """Test removing a sparql graph."""
-    #     fs.create_sparql_graph("Test_Graph")
-    #     fs.remove_sparql_graph("Test_Graph")
+    def test_remove_sparql_graph(self):
+        """Test removing a sparql graph."""
+        fs.create_sparql_graph("Test_Graph")
+        fs.remove_sparql_graph("Test_Graph")
 
-    #     sparql = SPARQLWrapper("http://host.docker.internal:3030/mydataset/query")
-    #     sparql.setCredentials("admin", "postgres")
-    #     sparql.setReturnFormat(JSON)
-    #     sparql.setQuery("""
-    #         PREFIX : """ + FUSEKI_PREFIX + """
-    #         SELECT ?s ?p ?o
-    #         WHERE {
-    #             GRAPH :Test_Graph {
-    #                 ?s ?p ?o
-    #             }
-    #         }
-    #     """)
-    #     results = sparql.query().convert()
-    #     self.assertEqual(len(results["results"]["bindings"]), 0)
+        sparql = SPARQLWrapper("http://host.docker.internal:3030/mydataset/query")
+        sparql.setCredentials("admin", "postgres")
+        sparql.setReturnFormat(JSON)
+        sparql.setQuery("""
+            PREFIX : """ + fs.FUSEKI_PREFIX + """
+            SELECT ?s ?p ?o
+            WHERE {
+                GRAPH :Test_Graph {
+                    ?s ?p ?o
+                }
+            }
+        """)
+        results = sparql.query().convert()
+        self.assertEqual(len(results["results"]["bindings"]), 0)
         
     # def test_insert_pandas_dataframe_into_sparql_graph(self):
     #     """Test inserting a pandas dataframe into a sparql graph."""
