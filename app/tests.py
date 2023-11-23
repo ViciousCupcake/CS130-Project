@@ -3,13 +3,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.http import HttpRequest
 from django.urls import reverse
-from django.http import HttpRequest
-from django.urls import reverse
 from .models import Mapping
 from .forms import MappingForm
 from .utils.parse_helpers import parse_excel
 from .views import upload_to_fuseki
-from .views import search_mappings
 from .views import search_mappings
 from unittest.mock import patch, MagicMock
 from SPARQLWrapper import SPARQLWrapper, JSON
@@ -18,6 +15,7 @@ import pandas as pd
 from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from io import BytesIO
+from django.urls import reverse
 
 
 class EFITestCase(TestCase):
