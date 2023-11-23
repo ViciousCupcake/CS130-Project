@@ -76,24 +76,24 @@ class EFITestCase(TestCase):
         results = sparql.query().convert()
         self.assertEqual(len(results["results"]["bindings"]), 0)
         
-    # def test_insert_pandas_dataframe_into_sparql_graph(self):
-    #     """Test inserting a pandas dataframe into a sparql graph."""
-    #     fs.create_sparql_graph("Test_Graph")
+    def test_insert_pandas_dataframe_into_sparql_graph(self):
+        """Test inserting a pandas dataframe into a sparql graph."""
+        fs.create_sparql_graph("Test_Graph")
         
-    #     # Create Mapping object
-    #     mapping = Mapping(
-    #         title="Test Mapping",
-    #         graph_name="Test_Graph",
-    #         description="Test description",
-    #         fuseki_relations=[["Test_Attribute_1", "Test_Relation", "Test_Attribute_2"]],
-    #         excel_format={"test": "format"}
-    #     )
-    #     mapping.save()
+        # Create Mapping object
+        mapping = Mapping(
+            title="Test Mapping",
+            graph_name="Test_Graph",
+            description="Test description",
+            fuseki_relations=[["Test_Attribute_1", "Test_Relation", "Test_Attribute_2"]],
+            excel_format={"test": "format"}
+        )
+        mapping.save()
         
-    #     data = {"Test_Attribute_1": ["Test_Value_1"], "Test_Attribute_2": ["Test_Value_2"]}
-    #     df = pd.DataFrame(data)
+        data = {"Test_Attribute_1": ["Test_Value_1"], "Test_Attribute_2": ["Test_Value_2"]}
+        df = pd.DataFrame(data)
         
-    #     fs.insert_pandas_dataframe_into_sparql_graph("Test_Graph", "Test Mapping", df)
+        fs.insert_pandas_dataframe_into_sparql_graph("Test_Graph", "Test Mapping", df)
         
     def test_delete_model(self):
         """Test that a model can be deleted."""
