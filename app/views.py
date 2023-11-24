@@ -130,13 +130,13 @@ def upload(request):
 
             # retrieve POST request information
             uploaded_file = request.FILES['excelFile']
+            mappings = Mapping.objects.all()
             try:
                 selected_mapping_id = request.POST['mapping']
                 selected_mapping = Mapping.objects.get(pk=selected_mapping_id)
                 graph_name = selected_mapping.graph_name
                 selected_mapping_title = selected_mapping.title
             except KeyError:
-                mappings = Mapping.objects.all()
                 return render(request, "app/upload.html", {"mappings": mappings, 'error': 'Please select a mapping'})
 
             # if valid file extension, upload file to knowledge base
@@ -144,13 +144,10 @@ def upload(request):
                 file_name = uploaded_file.name
                 df = pd.read_excel(uploaded_file)
                 insert_pandas_dataframe_into_sparql_graph(graph_name, selected_mapping_title, df)
-                mappings = Mapping.objects.all()
                 return render(request, "app/upload.html", {"mappings": mappings, 'file_name': file_name})
             else:
-                mappings = Mapping.objects.all()
                 return render(request, "app/upload.html", {"mappings": mappings, 'error': 'Invalid file format: an .xls or .xlsx file is expected'})
         else:
-            mappings = Mapping.objects.all()
             return render(request, "app/upload.html", {"mappings": mappings, 'error': 'No file uploaded'})
     elif request.method == 'GET':
         mappings = search_mappings(request)
