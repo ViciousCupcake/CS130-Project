@@ -3,16 +3,39 @@
 {% block title %}Example{% endblock title %}
 
 {% block content %}
-    <p>Received {{ data }} from backend.</p>
     {% if user.is_authenticated %}
-        Welcome, {{ user.username }}! 
-        {% if user.is_superuser %}
-        You are an admin, authenticated with username: {{ user.username }}!
-        {% endif %}
-        <p><a href="{% url 'logout' %}">Log Out</a></p>
-    {% else %}
-        <p>Want to log in or register?</p>
-        <a href="{% url 'login' %}">Log In</a> |
-        <a href="{% url 'register' %}">Register</a>
+        <!-- Welcome page upon login -->
+        <header class="page-header">
+            <div class="header-logo">EFi</div>
+            <div class="header-link"><a href="{% url 'logout' %}">Log Out</a></div>
+        </header>
+        <div class="main-page-container">
+            <h1>Welcome, {{ user.username }}!</h1>
+            {% if user.is_superuser %}
+                <h3>You are an admin user</h3>
+                <div class="center">
+                    <a href="{% url 'select' %}"><button class="shiny">View Database Contents</button></a>
+                </div>
+                <div class="center">
+                    <a href="{% url 'upload' %}"><button class="shiny">Upload Mappings</button></a>
+                    <a href="{% url 'download' %}"><button class="shiny">Download Mappings</button></a>
+                    <a href="{% url 'visualize_mapping' %}"><button class="shiny">Visualize Mappings</button></a>
+                </div>
+            {% else %}
+                <h3></h3>
+                <a href="{% url 'upload' %}"><button class="shiny">Upload Mappings</button></a>
+                <div class="center">
+                    <a href="{% url 'download' %}"><button class="shiny">Download Mappings</button></a>
+                </div>
+                <a href="{% url 'visualize_mapping' %}"><button class="shiny">Visualize Mappings</button></a>
+            {% endif %}
+        </div>
+    {% else %} 
+        <!-- Main page -->
+        <div class="main-page-container">
+            <h1>Welcome to EXCELlent Fuseki Interface (EFi)</h1>
+            <h3>EFi is an interface that empowers engineers to define mappings between Microsoft Excel documents and the Fuseki knowledge base.</h3>
+            <a href="{% url 'login' %}"><button class="shiny">Get Started</button></a>
+        </div>
     {% endif %}
 {% endblock content %}

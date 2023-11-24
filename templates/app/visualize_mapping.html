@@ -1,11 +1,21 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2>Visualize Mapping</h2>
-    <form method="post" action="{% url 'visualize_mapping' %}">
-        {% csrf_token %}
-        <label for="mappingTitle">Enter the Title of the Mapping:</label>
-        <input type="text" id="mappingTitle" name="mappingTitle" required>
-        <button type="submit">Visualize</button>
-    </form>
+<header class="page-header">
+    <div class="header-logo">EFi</div>
+    <div class="header-link">
+        <a href="{% url 'index' %}">HOME</a>
+        <a href="{% url 'logout' %}">LOGOUT</a>
+    </div>
+</header>
+<h1 class="title">Visualize Mapping</h1>
+<form method="post" action="{% url 'visualize_mapping' %}" class="search-form">
+    {% csrf_token %}
+    <label for="mappingTitle">Enter the Title of the Mapping:</label>
+    <input type="text" id="mappingTitle" name="mappingTitle" required>
+    <button type="submit" class="clear">Visualize</button>
+</form>
+<div class="center">
+    <a href="{% url 'index' %}"><button class="shiny">&laquo; Go back</button></a>
+</div>
 {% endblock %}
