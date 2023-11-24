@@ -126,11 +126,11 @@ def upload(request):
     """ Upload and parse an excel sheet"""
 
     if request.method == 'POST':
+        mappings = Mapping.objects.all()
         if 'excelFile' in request.FILES:
 
             # retrieve POST request information
             uploaded_file = request.FILES['excelFile']
-            mappings = Mapping.objects.all()
             try:
                 selected_mapping_id = request.POST['mapping']
                 selected_mapping = Mapping.objects.get(pk=selected_mapping_id)
