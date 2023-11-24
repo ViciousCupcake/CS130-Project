@@ -3,26 +3,54 @@
 {% block title %}All values from DB{% endblock title %}
 
 {% block content %}
-<h1>Database Contents</h1>
-<table>
-    <tr>
-        <th>Title</th>
-        <th>Description</th> 
-        <th>Time of last update</th>
-        <th></th>
-    </tr>
-    {% for x in mappings %}
+<link href='https://unpkg.com/css.gg@2.0.0/icons/css/trash.css' rel='stylesheet'>
+<header class="page-header">
+    <div class="header-logo">EFi</div>
+    <div class="header-link">
+        <a href="{% url 'index' %}">HOME</a>
+        <a href="{% url 'logout' %}">LOGOUT</a>
+    </div>
+</header>
+<h1 class="title">Database Contents</h1>
+<div class="table-container">
+    <table>
         <tr>
-            <td>{{ x.title }}</td>
-            <td>{{ x.description }}</td>
-            <td>{{ x.last_updated }}</td>
-            <td>
-                <form action="{% url 'modify' pk=x.id %}" method="get">
-                    {% csrf_token %}
-                    <input type="submit" value="Modify">
-                </form>
-            </td>
+            <th>Title</th>
+            <th>Description</th> 
+            <th>Time of last update</th>
+            <th></th>
+            <th></th>
         </tr>
-    {% endfor %}
-</table>
+        <tbody>
+            {% for x in mappings %}
+            <tr>
+                <td>{{ x.title }}</td>
+                <td>{{ x.description }}</td>
+                <td>{{ x.last_updated }}</td>
+                <td>
+                    <form action="{% url 'modify' pk=x.id %}" method="get">
+                        {% csrf_token %}
+                        <input type="submit" value="Modify">
+                    </form>
+                </td>
+                <td>
+                    <form action="{% url 'delete' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="id" value="{{ x.id }}">
+                        <button type="submit" class="delete"><span class="trash"></span></button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="center">
+    <a href="{% url 'modify' %}"><button class="shiny">+ New Mapping</button></a>
+</div>
+{% if mapping_title %}
+<div class="confirmation-msg">
+    Successfully deleted Mapping with Title {{ mapping_title }}.
+</div>
+{% endif %}
 {% endblock content %}

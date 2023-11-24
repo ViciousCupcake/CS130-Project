@@ -1,0 +1,13 @@
+.search-form {
+    font-family: 'Inter', sans-serif;
+    text-align: center;
+    color: #394867;
+}
+
+.search-form input {
+    width: 350px;
+    padding: 10px;
+    margin-bottom: 16px;
+    border: 1px solid #394867;
+    border-radius: 10px;
+}

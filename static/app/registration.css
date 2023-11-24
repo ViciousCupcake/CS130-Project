@@ -1,0 +1,38 @@
+.registration-container {
+    font-family: 'Inter', sans-serif;
+    max-width: 400px;
+    margin: 150px auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    -webkit-animation-name: fade-in;
+    -moz-animation-name: fade-in;
+    animation-name: fade-in;
+    -webkit-animation-duration: 0.5s;
+    -moz-animation-duration: 0.5s;
+    animation-duration: 0.5s;
+}
+.registration-text {
+    text-align: center;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.registration-form {
+    text-align: center;
+}
+
+.registration-form input {
+    width: 350px;
+    padding: 10px;
+    margin-bottom: 16px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+
+.registration-error {
+    padding: 10px;
+    align-items: center;
+    color:red;
+}

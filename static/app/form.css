@@ -1,0 +1,20 @@
+.modify-container {
+    font-family: 'Inter', sans-serif;
+    padding: 20px;
+}
+
+.modify-form {
+    width: 421px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.modify-form input {
+    font-family: 'Inter', sans-serif;
+    width: 400px;
+    height: 20px;
+    padding: 10px;
+    margin-bottom: 16px;
+    border: 1px solid #394867;
+    border-radius: 10px;
+}
