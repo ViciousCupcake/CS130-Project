@@ -326,7 +326,7 @@ class UploadViewTest(TestCase):
         m = Mapping.objects.create(title='test', description='test', graph_name='Test_Upload_POST', fuseki_relations=[["Data1", "test", "Data2"]], excel_format='{"test": "test"}')
         response = self.client.post('/upload/', {'excelFile': valid_excel, 'mapping': m.pk})
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'app/upload_success.html')
+        self.assertTemplateUsed(response, 'app/upload.html')
         self.assertIn('file_name', response.context)
 
 class RegistrationSystemTests(TestCase):
