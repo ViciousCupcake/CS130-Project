@@ -39,65 +39,65 @@ class EFITestCase(TestCase):
         self.assertEqual(saved_mapping.fuseki_relations, [["Test Attribute 1", "Test Relation", "Test Attribute 2"]])
         self.assertEqual(saved_mapping.excel_format, {"test": "format"})
 
-    # def test_create_sparql_graph(self):
-    #     """Test creating a sparql graph."""
-    #     fs.create_sparql_graph("Test_Graph")
+    def test_create_sparql_graph(self):
+        """Test creating a sparql graph."""
+        fs.create_sparql_graph("Test_Graph")
 
-    #     sparql = SPARQLWrapper("http://host.docker.internal:3030/mydataset/query")
-    #     sparql.setCredentials("admin", "postgres")
-    #     sparql.setReturnFormat(JSON)
-    #     sparql.setQuery("""
-    #         PREFIX : """ + FUSEKI_PREFIX + """
-    #         SELECT ?s ?p ?o
-    #         WHERE {
-    #             GRAPH :Test_Graph {
-    #                 ?s ?p ?o
-    #             }
-    #         }
-    #     """)
-    #     results = sparql.query().convert()
-    #     self.assertEqual(len(results["results"]["bindings"]), 0)
+        sparql = SPARQLWrapper("http://fuseki:3030/mydataset/query")
+        sparql.setCredentials("admin", "postgres")
+        sparql.setReturnFormat(JSON)
+        sparql.setQuery("""
+            PREFIX : """ + fs.FUSEKI_PREFIX + """
+            SELECT ?s ?p ?o
+            WHERE {
+                GRAPH :Test_Graph {
+                    ?s ?p ?o
+                }
+            }
+        """)
+        results = sparql.query().convert()
+        self.assertEqual(len(results["results"]["bindings"]), 0)
         
-    #     fs.remove_sparql_graph("Test_Graph")
+        fs.remove_sparql_graph("Test_Graph")
         
-    # def test_remove_sparql_graph(self):
-    #     """Test removing a sparql graph."""
-    #     fs.create_sparql_graph("Test_Graph")
-    #     fs.remove_sparql_graph("Test_Graph")
+    def test_remove_sparql_graph(self):
+        """Test removing a sparql graph."""
+        fs.create_sparql_graph("Test_Graph")
+        fs.remove_sparql_graph("Test_Graph")
 
-    #     sparql = SPARQLWrapper("http://host.docker.internal:3030/mydataset/query")
-    #     sparql.setCredentials("admin", "postgres")
-    #     sparql.setReturnFormat(JSON)
-    #     sparql.setQuery("""
-    #         PREFIX : """ + FUSEKI_PREFIX + """
-    #         SELECT ?s ?p ?o
-    #         WHERE {
-    #             GRAPH :Test_Graph {
-    #                 ?s ?p ?o
-    #             }
-    #         }
-    #     """)
-    #     results = sparql.query().convert()
-    #     self.assertEqual(len(results["results"]["bindings"]), 0)
+        sparql = SPARQLWrapper("http://fuseki:3030/mydataset/query")
+        sparql.setCredentials("admin", "postgres")
+        sparql.setReturnFormat(JSON)
+        sparql.setQuery("""
+            PREFIX : """ + fs.FUSEKI_PREFIX + """
+            SELECT ?s ?p ?o
+            WHERE {
+                GRAPH :Test_Graph {
+                    ?s ?p ?o
+                }
+            }
+        """)
+        results = sparql.query().convert()
+        self.assertEqual(len(results["results"]["bindings"]), 0)
         
-    # def test_insert_pandas_dataframe_into_sparql_graph(self):
-    #     """Test inserting a pandas dataframe into a sparql graph."""
-    #     fs.create_sparql_graph("Test_Graph")
+    def test_insert_pandas_dataframe_into_sparql_graph(self):
+        """Test inserting a pandas dataframe into a sparql graph."""
+        fs.create_sparql_graph("Test_Graph")
         
-    #     # Create Mapping object
-    #     mapping = Mapping(
-    #         title="Test Mapping",
-    #         graph_name="Test_Graph",
-    #         description="Test description",
-    #         fuseki_relations=[["Test_Attribute_1", "Test_Relation", "Test_Attribute_2"]],
-    #         excel_format={"test": "format"}
-    #     )
-    #     mapping.save()
+        # Create Mapping object
+        mapping = Mapping(
+            title="Test Mapping",
+            graph_name="Test_Graph",
+            description="Test description",
+            fuseki_relations=[["Test_Attribute_1", "Test_Relation", "Test_Attribute_2"]],
+            excel_format={"test": "format"}
+        )
+        mapping.save()
         
-    #     data = {"Test_Attribute_1": ["Test_Value_1"], "Test_Attribute_2": ["Test_Value_2"]}
-    #     df = pd.DataFrame(data)
+        data = {"Test_Attribute_1": ["Test_Value_1"], "Test_Attribute_2": ["Test_Value_2"]}
+        df = pd.DataFrame(data)
         
-    #     fs.insert_pandas_dataframe_into_sparql_graph("Test_Graph", "Test Mapping", df)
+        fs.insert_pandas_dataframe_into_sparql_graph("Test_Graph", "Test Mapping", df)
         
     def test_delete_model(self):
         """Test that a model can be deleted."""
@@ -196,36 +196,36 @@ class EFITestCase(TestCase):
             self.assertEqual(expected_prefixes.strip(), prefixes.strip())
             self.assertEqual(expected_triples.strip(), triples.strip())
 
-    # def test_fuseki_relations_to_sparql_response(self):
-    #     """Test fuseki_relations_to_sparql_response function that takes in a mapping and returns the response"""
+    def test_fuseki_relations_to_sparql_response(self):
+        """Test fuseki_relations_to_sparql_response function that takes in a mapping and returns the response"""
 
-    #     fs.create_sparql_graph("Test_Graph")
+        fs.create_sparql_graph("Test_Graph")
         
-    #     # Create Mapping object
-    #     mapping_relations = [["Test_Attribute_1", "Test_Relation1", "Test_Attribute_2"], 
-    #                          ["Test_Attribute_1", "Test_Relation2", "Test_Attribute_3"],
-    #                     ["Test_Attribute_2", "Test_Relation3", "Test_Attribute_3"]]
+        # Create Mapping object
+        mapping_relations = [["Test_Attribute_1", "Test_Relation1", "Test_Attribute_2"], 
+                             ["Test_Attribute_1", "Test_Relation2", "Test_Attribute_3"],
+                        ["Test_Attribute_2", "Test_Relation3", "Test_Attribute_3"]]
         
-    #     mapping = Mapping(
-    #         title="Test Mapping",
-    #         graph_name="Test_Graph",
-    #         description="Test description",
-    #         fuseki_relations=mapping_relations,
-    #         excel_format={"test": "format"}
-    #     )
-    #     mapping.save()
+        mapping = Mapping(
+            title="Test Mapping",
+            graph_name="Test_Graph",
+            description="Test description",
+            fuseki_relations=mapping_relations,
+            excel_format={"test": "format"}
+        )
+        mapping.save()
 
-    #     # insert some fake data
-    #     data = {"Test_Attribute_1": ["1", "2", "1", "4"], "Test_Attribute_2": ["5", "6", "7", "8"], "Test_Attribute_3": ["9", "10", "11", "12"]}
-    #     df = pd.DataFrame(data)
-    #     fs.insert_pandas_dataframe_into_sparql_graph("Test_Graph", "Test Mapping", df)
+        # insert some fake data
+        data = {"Test_Attribute_1": ["1", "2", "1", "4"], "Test_Attribute_2": ["5", "6", "7", "8"], "Test_Attribute_3": ["9", "10", "11", "12"]}
+        df = pd.DataFrame(data)
+        fs.insert_pandas_dataframe_into_sparql_graph("Test_Graph", "Test Mapping", df)
 
-    #     # obtain response
-    #     response = fs.fuseki_relations_to_sparql_response(mapping.fuseki_relations, "Test_Graph")
-    #     valid_cols = set({"Test_Attribute_2", "Test_Attribute_3", "Test_Attribute_1"})
-    #     assert(len(response["results"]["bindings"]) != 0)
-    #     for key in response["results"]["bindings"][0]:
-    #         assert(key in valid_cols)
+        # obtain response
+        response = fs.fuseki_relations_to_sparql_response(mapping.fuseki_relations, "Test_Graph")
+        valid_cols = set({"Test_Attribute_2", "Test_Attribute_3", "Test_Attribute_1"})
+        assert(len(response["results"]["bindings"]) != 0)
+        for key in response["results"]["bindings"][0]:
+            assert(key in valid_cols)
 
     def test_fuseki_response_to_DataFrame(self):
         """Test fuseki_response_to_DataFrame function that takes in a fueski response and returns a DataFrame"""
@@ -316,17 +316,17 @@ class UploadViewTest(TestCase):
         self.assertTemplateUsed(response, 'app/upload.html')
         self.assertIn('data', response.context)
         
-    # def test_valid_post_request(self):
-    #     df = pd.DataFrame({'Data1': [1, 2, 3], 'Data2': [5, 6, 7]})
-    #     excel_file = BytesIO()
-    #     df.to_excel(excel_file)
-    #     excel_file.seek(0)
-    #     valid_excel = SimpleUploadedFile('valid.xlsx', excel_file.getvalue(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    #     m = Mapping.objects.create(title='test', description='test', graph_name='Test_Upload_POST', fuseki_relations=[["Data1", "test", "Data2"]], excel_format='{"test": "test"}')
-    #     response = self.client.post('/upload/', {'excelFile': valid_excel, 'mapping': m.pk})
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertTemplateUsed(response, 'app/upload.html')
-    #     self.assertIn('file_name', response.context)
+    def test_valid_post_request(self):
+        df = pd.DataFrame({'Data1': [1, 2, 3], 'Data2': [5, 6, 7]})
+        excel_file = BytesIO()
+        df.to_excel(excel_file)
+        excel_file.seek(0)
+        valid_excel = SimpleUploadedFile('valid.xlsx', excel_file.getvalue(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        m = Mapping.objects.create(title='test', description='test', graph_name='Test_Upload_POST', fuseki_relations=[["Data1", "test", "Data2"]], excel_format='{"test": "test"}')
+        response = self.client.post('/upload/', {'excelFile': valid_excel, 'mapping': m.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'app/upload.html')
+        self.assertIn('file_name', response.context)
 
 
 class RegistrationSystemTests(TestCase):
