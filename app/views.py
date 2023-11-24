@@ -70,7 +70,6 @@ def select_mapping(request):
 @user_passes_test(is_admin)
 def modify_mapping(request, pk=None):
     """View that allows Administrative users to modify a mapping"""
-
     # The request method is GET if we are loading the webpage for the first time
     if request.method == 'GET':
         # Attempt to preload mapping information to form if it already exists in db
@@ -91,7 +90,7 @@ def modify_mapping(request, pk=None):
             form = MappingForm(request.POST)
         if form.is_valid():
             form.save()
-            return render(request, "app/save_success.html", {'mapping_title': form.cleaned_data['title']})
+            return render(request, "app/modify.html", {'form':form, 'mapping_title': form.cleaned_data['title']})
         else:
             return render(request, "app/modify.html", {'form': form})
 
@@ -102,7 +101,8 @@ def delete_mapping(request):
     if request.method == 'POST':
         mapping = Mapping.objects.get(pk=request.POST['id'])
         mapping.delete()
-        return render(request, "app/delete_success.html", {'mapping_title': mapping.title})
+        mappings = Mapping.objects.all()
+        return render(request, "app/select_mapping.html", {'mappings': mappings, 'mapping_title': mapping.title})
     elif request.method == 'GET':
         # Redirect to home page
         return redirect('index')
@@ -126,28 +126,32 @@ def upload(request):
     """ Upload and parse an excel sheet"""
 
     if request.method == 'POST':
+        mappings = Mapping.objects.all()
         if 'excelFile' in request.FILES:
 
             # retrieve POST request information
             uploaded_file = request.FILES['excelFile']
-            selected_mapping_id = request.POST['mapping']
-            selected_mapping = Mapping.objects.get(pk=selected_mapping_id)
-            graph_name = selected_mapping.graph_name
-            selected_mapping_title = selected_mapping.title
+            try:
+                selected_mapping_id = request.POST['mapping']
+                selected_mapping = Mapping.objects.get(pk=selected_mapping_id)
+                graph_name = selected_mapping.graph_name
+                selected_mapping_title = selected_mapping.title
+            except KeyError:
+                return render(request, "app/upload.html", {"mappings": mappings, 'error': 'Please select a mapping'})
 
             # if valid file extension, upload file to knowledge base
             if uploaded_file.name.endswith(('.xls', '.xlsx')):
                 file_name = uploaded_file.name
                 df = pd.read_excel(uploaded_file)
                 insert_pandas_dataframe_into_sparql_graph(graph_name, selected_mapping_title, df)
-                return render(request, "app/upload_success.html", {'file_name': file_name})
+                return render(request, "app/upload.html", {"mappings": mappings, 'file_name': file_name})
             else:
-                return render(request, "app/upload.html", {'error': 'Invalid file format: an .xls or .xlsx file is expected'})
+                return render(request, "app/upload.html", {"mappings": mappings, 'error': 'Invalid file format: an .xls or .xlsx file is expected'})
         else:
-            return render(request, "app/upload.html", {'error': 'No file uploaded'})
+            return render(request, "app/upload.html", {"mappings": mappings, 'error': 'No file uploaded'})
     elif request.method == 'GET':
         mappings = search_mappings(request)
-        return render(request, "app/upload.html", {"mappings": mappings})
+        return render(request, "app/upload.html", {"mappings": mappings, 'error':None})
     else:
         return render(request, "app/upload.html", {"data": 'unresolved request'})
 
@@ -192,7 +196,6 @@ def download_file(request, pk):
     response = HttpResponse(file_model.excel_file, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = f'attachment; filename={file_name}'
     return response
-
 
 def register(request):
     if request.method == 'POST':

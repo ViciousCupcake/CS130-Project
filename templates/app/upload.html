@@ -3,28 +3,46 @@
 {% block title %}All values from DB{% endblock title %}
 
 {% block content %}
-
-{% load static %} 
-<link rel="stylesheet" href="{% static 'app/style.css' %}">
-
-<h2>Search for a Mapping</h2>
-<form method="get" action=".">  <!-- action set to the current URL -->
+<header class="page-header">
+    <div class="header-logo">EFi</div>
+    <div class="header-link">
+        <a href="{% url 'index' %}">HOME</a>
+        <a href="{% url 'logout' %}">LOGOUT</a>
+    </div>
+</header>
+<h1 class="title">Search for a Mapping</h1>
+<form method="get" action="." class="search-form">  <!-- action set to the current URL -->
     <input type="text" name="q" placeholder="Search mappings..." value="{{ query }}">
-    <button type="submit">Search</button>
+    <button type="submit" class="clear">Search</button>
 </form>
-
-<!-- Button linking to the visualize_mapping page -->
-<a href="{% url 'visualize_mapping' %}" class="btn btn-primary">Visualize a Mapping</a>
-
-<h2>Upload an Excel File</h2>
+<div class="center">
+    <!-- Button linking to the visualize_mapping page -->
+    <a href="{% url 'visualize_mapping' %}"><button class="shiny">Visualize a Mapping</button></a>
+</div>
+<div class="line"></div>
+<h1 class="title2">Upload an Excel File</h1>
+{% if error %}
+    <div class="error-msg">
+        {{ error }}
+    </div>
+{% endif %}
+{% if file_name and mappings %}
+<div class="confirmation-msg">
+    Your Excel file has been processed successfully.
+    {% if num_rows %}
+        <p>Number of Rows in the Excel File: {{ num_rows }}</p>
+    {% endif %}
+</div>
+{% endif %}
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <label for="excelFile">Select an Excel file:</label>
-    <input type="file" name="excelFile" id="excelFile" accept=".xls, .xlsx">
-    <input type="submit" value="Upload">
-</form>
+    <div class = "file-selector-container">
+        <label for="excelFile">Select an Excel file:</label>
+        <input type="file" name="excelFile" id="excelFile" accept=".xls, .xlsx">
+    </div>
 
-{% if mappings %}
+    {% if mappings %}
+    <div class="table-container">
     <table>
         <tr>
             <th>Title</th>
@@ -33,19 +51,29 @@
             <th>Pick a Mapping!</th>
         </tr>
         {% for x in mappings %}
-            <tr>
-                <td>{{ x.title }}</td>
-                <td>{{ x.description }}</td>
-                <td>{{ x.last_updated }}</td>
-                <td>
+        <tr>
+            <td>{{ x.title }}</td>
+            <td>{{ x.description }}</td>
+            <td>{{ x.last_updated }}</td>
+            <td>
                     <input type="radio" id="mapping{{ forloop.counter }}" name="mapping" value="{{ x.id }}">
-                    <label for="mapping{{ forloop.counter }}">{{ x.graph_name }}</label>
                 </td>
             </tr>
-        {% endfor %}
-    </table>
-{% else %}
-    <p>No mappings found.</p>
-{% endif %}
+            {% endfor %}
+        </table>
+    </div>
+    {% else %}
+        <div class="error-msg">
+            No mappings found.
+        </div>
+    {% endif %}
+    <div class="center">
+        <button class="shiny" type="submit">Upload</button>
+    </div>
+</form>
+
+<div class="center">
+    <a href="{% url 'index' %}"><button class="shiny">&laquo; Go back</button></a>
+</div>
 
 {% endblock content %}

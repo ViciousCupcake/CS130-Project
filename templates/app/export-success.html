@@ -3,40 +3,52 @@
 {% block title %}Export Success!{% endblock title %}
 
 {% block content %}
-
-{% load static %} 
-<link rel="stylesheet" href="{% static 'app/export-success.css' %}">
-
-<p>Good news homies!!! We were able to successfully create the excel file using the mapping you picked!</p>
-<p>Here is the mapping you picked:</p>
-<table>
+<header class="page-header">
+  <div class="header-logo">EFi</div>
+  <div class="header-link">
+    <a href="{% url 'index' %}">HOME</a>
+    <a href="{% url 'logout' %}">LOGOUT</a>
+</div>
+</header>
+<h1 class="title">Download</h1>
+<h3>Good news homies!!! We were able to successfully create the excel file using the mapping you picked!</h3>
+<h3>Here is the mapping you picked:</h3>
+<div class="fixed-table-container">
+  <table class="small">
     <tr>
-        <th>Title</th>
-        <th>Description</th> 
-        <th>Time of last update</th>
+      <th>Title</th>
+      <th>Description</th> 
+      <th>Time of last update</th>
     </tr>
     <tr>
-        <td>{{ selected_mapping.title }}</td>
-        <td>{{ selected_mapping.description }}</td>
-        <td>{{ selected_mapping.last_updated }}</td>
+      <td>{{ selected_mapping.title }}</td>
+      <td>{{ selected_mapping.description }}</td>
+      <td>{{ selected_mapping.last_updated }}</td>
     </tr>
-</table>
-<h1>Preview of Generated Excel</h1>
-<table>
+  </table>
+</div>
+<div class="line"></div>
+<h2>Preview of Generated Excel</h2>
+<div class="fixed-table-container">
+  <table class="small">
     <tr>
       {% for header in df.columns %}
-        <th> {{header}} </th>
+      <th> {{header}} </th>
       {% endfor %}
     </tr>
-      {% for index, row in df.iterrows %}
-        <tr>
-          {% for ele in row %}
-            <td> {{ele}} </td>
-          {% endfor %}
-        </tr>
+    {% for index, row in df.iterrows %}
+    <tr>
+      {% for ele in row %}
+      <td> {{ele}} </td>
       {% endfor %}
+    </tr>
+    {% endfor %}
   </table>
-
-<a href="{% url 'download_file' pk=file_pk %}" class="button">Download</a>
-
+</div>
+<div class="center">
+  <a href="{% url 'download_file' pk=file_pk %}"><button class="shiny">Download</button></a>
+</div>
+<div class="center">
+  <a href="{% url 'download' %}"><button class="shiny">&laquo; Go back</button></a>
+</div>
 {% endblock content %}

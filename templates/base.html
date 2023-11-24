@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>{% block title %}{% endblock title %}</title>
-    </head>
 
-    <body>
-        <p style="background-color: hotpink;">WE NEED CSS DEVELOPERS PLEASE</p>
-        {% block content %}{% endblock content %}
-    </body>
+{% load static %}
+<html>
+  <link rel="stylesheet" href="{% static 'app/export-success.css' %}">
+  <link rel="stylesheet" href="{% static 'app/form.css' %}" />
+  <link rel="stylesheet" href="{% static 'app/header.css' %}" />
+  <link rel="stylesheet" href="{% static 'app/registration.css' %}" />
+  <link rel="stylesheet" href="{% static 'app/response.css' %}" />
+  <link rel="stylesheet" href="{% static 'app/search.css' %}" />
+  <link rel="stylesheet" href="{% static 'app/style.css' %}" />
+  {% block content %}{% endblock content %}
 </html>

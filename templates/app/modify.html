@@ -1,21 +1,31 @@
-
 {% extends "base.html" %}
 
 {% block title %}Modify Mapping{% endblock title %}
 
 {% block content %}
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form }}
-    <button type="submit">Submit</button>
-</form>
-
-{% if pk %}
-    <form action="{% url 'delete' %}" method="post">
+<header class="page-header">
+    <div class="header-logo">EFi</div>
+    <div class="header-link">
+        <a href="{% url 'index' %}">HOME</a>
+        <a href="{% url 'logout' %}">LOGOUT</a>
+    </div>
+</header>
+<h1 class="title">Mapping</h1>
+<div class="modify-container">
+    <form method="post" enctype="multipart/form-data" class="modify-form">
         {% csrf_token %}
-        <input type="hidden" name="id" value="{{ pk }}">
-        <button type="submit">Delete?</button>
+        {{ form.as_p }}
+        <div class="center">
+            <button type="submit" class="shiny">Submit</button>
+        </div>
     </form>
+    <div class="center">
+        <a href="{% url 'select' %}"><button class="shiny">&laquo; Go back</button></a>
+    </div>
+</div>
+{% if mapping_title %}
+<div class="confirmation-msg">
+    Successfully added Mapping with title {{ mapping_title }}.
+</div>
 {% endif %}
-
 {% endblock content %}
