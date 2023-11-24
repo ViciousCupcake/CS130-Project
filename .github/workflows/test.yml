@@ -8,7 +8,8 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+    container: lucasalt/act_base:latest
 
     steps:
       # need checkout before using docker-compose-action
