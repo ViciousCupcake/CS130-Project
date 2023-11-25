@@ -8,6 +8,7 @@ import django
 import pydoc
 import os
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'cs130_efi.settings'
-django.setup()
-pydoc.cli()
+if __name__ == '__main__':
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cs130_efi.settings')
+    django.setup()
+    pydoc.cli()
