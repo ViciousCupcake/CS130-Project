@@ -1,3 +1,8 @@
+"""
+This module defines test cases for the app. To run the tests, run the following command:
+`python manage.py test` within the `web` docker container.
+"""
+
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate

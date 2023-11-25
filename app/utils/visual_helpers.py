@@ -1,4 +1,8 @@
-# Helpers that include all visualization tools
+"""
+Helper functions for visualizing the data.
+"""
+
+
 import networkx as nx
 import matplotlib.pyplot as plt
 

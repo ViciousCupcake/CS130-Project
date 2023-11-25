@@ -1,3 +1,20 @@
+"""
+This module defines the urls for the app. The urls are as follows:
+    - /: Index page
+    - /list: Page that lists all mappings
+    - /upload: Page enabling users to upload excel files
+    - /download: Page enabling users to download excel files
+    - /accounts/login: Login page
+    - /accounts/logout: Logout page
+    - /register: Page that allows users to register
+    - /select: Page that allows users to select a mapping to modify
+    - /modify: Page that allows users to create a mapping
+    - /modify/<int:pk>: Page that allows users to modify a preexisting mapping
+    - /delete: API endpoint that allows users to delete a mapping. This page cannot be accessed directly.
+    - /visualize: Page that allows users to visualize a mapping
+    - /download/<int:pk>: API endpoint that allows users to download a preexisting excel file
+"""
+
 from django.urls import path
 from django.urls import include
 
@@ -12,13 +29,6 @@ urlpatterns = [
     # This defines:
         # accounts/login/ [name='login']
         # accounts/logout/ [name='logout']
-    # These paths are yet unimplemented:
-        # accounts/password_change/ [name='password_change']
-        # accounts/password_change/done/ [name='password_change_done']
-        # accounts/password_reset/ [name='password_reset']
-        # accounts/password_reset/done/ [name='password_reset_done']
-        # accounts/reset/<uidb64>/<token>/ [name='password_reset_confirm']
-        # accounts/reset/done/ [name='password_reset_complete']
     path("accounts/", include("django.contrib.auth.urls")),
     path('register/', views.register, name='register'), 
 

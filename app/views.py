@@ -1,3 +1,9 @@
+"""
+This file contains the views for the app. This represents the backend logic of
+this application. Please refer to app.urls for the urls of this application.
+"""
+
+
 from django.shortcuts import render, redirect, HttpResponse
 from django.core.files.base import File
 from django.contrib.auth.decorators import login_required
@@ -15,12 +21,21 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required, user_passes_test
 
 def is_admin(user):
+    """
+    Returns True if the user is an admin, False otherwise.
+    """
     return user.is_authenticated and user.is_superuser
 
 def index(request):
+    """
+    Renders the index page.
+    """
     return render(request, "app/index.html", {'data': 'Hello, world!'})
 
 def list(request):
+    """
+    Renders the list page, which lists all mappings.
+    """
     mappings = Mapping.objects.all()
     return render(request, "app/list.html", {"mappings": mappings})
 
@@ -198,6 +213,7 @@ def download_file(request, pk):
     return response
 
 def register(request):
+    """Register a new user"""
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():

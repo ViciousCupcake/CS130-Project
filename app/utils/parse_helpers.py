@@ -1,4 +1,8 @@
-# Helpers that include all necessary parsers
+"""
+This module contains helper functions for parsing excel sheets to rdf
+"""
+
+
 import pandas as pd
 from rdflib import Graph, Literal, Namespace, URIRef
 
