@@ -1,3 +1,9 @@
+"""
+This file contains functions for interacting with the fuseki server.
+Specifically, it contains functions for creating sparql graphs, inserting data
+into sparql graphs, and querying sparql graphs.
+"""
+
 from SPARQLWrapper import SPARQLWrapper, JSON, POST, GET
 from app.models import Mapping
 import pandas as pd
@@ -20,7 +26,7 @@ attribute - relation - attribute
 
 def create_sparql_graph(graph_name: str):
     """
-    Creates a sparql graph which adheres to the relations in the schema
+    Creates a sparql graph which adheres to the relations in the schema.
     """
     sparql = SPARQLWrapper(f"{API_BASE_URL}/update")
     sparql.setCredentials(fuseki_username, fuseki_password)
