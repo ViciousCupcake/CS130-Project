@@ -55,10 +55,10 @@ def visualize_mapping(request):
 
     mappings = Mapping.objects.all()
     if request.method == 'POST':
-        selected_mapping_id = request.POST['mapping']
 
         # Query the Mapping model to get the desired mapping
         try:
+            selected_mapping_id = request.POST['mapping']
             mapping = Mapping.objects.get(pk=selected_mapping_id)
             relations = mapping.fuseki_relations
 
