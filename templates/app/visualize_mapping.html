@@ -9,11 +9,36 @@
     </div>
 </header>
 <h1 class="title">Visualize Mapping</h1>
-<form method="post" action="{% url 'visualize_mapping' %}" class="search-form">
+{% if error %}
+    <div class="error-msg">
+        {{ error }}
+    </div>
+{% endif %}
+<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <label for="mappingTitle">Enter the Title of the Mapping:</label>
-    <input type="text" id="mappingTitle" name="mappingTitle" required>
-    <button type="submit" class="clear">Visualize</button>
+    <div class="table-container">
+        <table>
+            <tr>
+                <th>Title</th>
+                <th>Description</th> 
+                <th>Time of last update</th>
+                <th>Pick a Mapping!</th>
+            </tr>
+            {% for x in mappings %}
+                <tr>
+                    <td>{{ x.title }}</td>
+                    <td>{{ x.description }}</td>
+                    <td>{{ x.last_updated }}</td>
+                    <td>
+                        <input type="radio" name="mapping" value="{{ x.id }}" />
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="center">
+        <button class="shiny" type="submit">Visualize</button>
+    </div>
 </form>
 <div class="center">
     <a href="{% url 'index' %}"><button class="shiny">&laquo; Go back</button></a>

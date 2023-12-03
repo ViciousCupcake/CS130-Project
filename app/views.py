@@ -77,25 +77,24 @@ def visualize_mapping(request):
     :return: The rendered visualization page.
     """
 
+    mappings = Mapping.objects.all()
     if request.method == 'POST':
-        mapping_title = request.POST.get('mappingTitle')
 
         # Query the Mapping model to get the desired mapping
         try:
-            mapping = Mapping.objects.get(title=mapping_title)
+            selected_mapping_id = request.POST['mapping']
+            mapping = Mapping.objects.get(pk=selected_mapping_id)
             relations = mapping.fuseki_relations
 
             # Visualize the mapping and save it as an image
             visualize_relations(relations, 'static/images/my_graph.png')
 
             return render(request, 'app/visualization_result.html', {'image_path': 'images/my_graph.png'})
-
-        except Mapping.DoesNotExist:
-            # Handle the case where the mapping does not exist
-            return render(request, 'app/visualize_mapping.html', {'error': 'Mapping not found'})
+        except KeyError:
+            return render(request, "app/visualize_mapping.html", {"mappings": mappings, 'error': 'Please select a mapping'})
 
     # For a GET request, just render the form
-    return render(request, 'app/visualize_mapping.html')
+    return render(request, 'app/visualize_mapping.html', {"mappings": mappings})
 
 @login_required
 @user_passes_test(is_admin)
@@ -237,33 +236,36 @@ def download(request):
 
     # If user is accessing this page for the first time,
     # present the user with a list of mappings available.
+    mappings = Mapping.objects.all()
     if request.method == 'GET':
-        mappings = Mapping.objects.all()
         return render(request, "app/download.html", {"mappings": mappings})
     
     # If user has selected a mapping to download,
     # convert fuseki to excel and allow user to download file
     if request.method == 'POST':
-        selected_mapping_id = request.POST['mapping']
-        selected_mapping = Mapping.objects.get(pk=selected_mapping_id)
+        try:
+            selected_mapping_id = request.POST['mapping']
+            selected_mapping = Mapping.objects.get(pk=selected_mapping_id)
 
-        # query fuseki with mapping to create dataframe
-        relations, graph_name = selected_mapping.fuseki_relations, selected_mapping.graph_name
-        fuseki_response = fuseki_relations_to_sparql_response(relations, graph_name)
-        headers, df = fuseki_response_to_DataFrame(fuseki_response)
+            # query fuseki with mapping to create dataframe
+            relations, graph_name = selected_mapping.fuseki_relations, selected_mapping.graph_name
+            fuseki_response = fuseki_relations_to_sparql_response(relations, graph_name)
+            headers, df = fuseki_response_to_DataFrame(fuseki_response)
 
-        # convert dataframe to excel in memory
-        file_name='excel_data.xlsx'
-        in_memory_file = BytesIO()
-        df.to_excel(in_memory_file, index=False)
-        in_memory_file.seek(0, 0)
-        excel_file_obj = File(in_memory_file,  name=file_name)
+            # convert dataframe to excel in memory
+            file_name='excel_data.xlsx'
+            in_memory_file = BytesIO()
+            df.to_excel(in_memory_file, index=False)
+            in_memory_file.seek(0, 0)
+            excel_file_obj = File(in_memory_file,  name=file_name)
 
-        # save excel in memory to GeneratedExcelFile obj in Django
-        file_model = GeneratedExcelFile(excel_file=excel_file_obj)
-        file_model.save()
+            # save excel in memory to GeneratedExcelFile obj in Django
+            file_model = GeneratedExcelFile(excel_file=excel_file_obj)
+            file_model.save()
 
-        return render(request, "app/export-success.html", {'file_pk': file_model.pk, 'selected_mapping': selected_mapping, 'df':df, 'headers':headers})
+            return render(request, "app/export-success.html", {'file_pk': file_model.pk, 'selected_mapping': selected_mapping, 'df':df, 'headers':headers})
+        except KeyError:
+                return render(request, "app/download.html", {"mappings": mappings, 'error': 'Please select a mapping'})
 
 def download_file(request, pk):
     """

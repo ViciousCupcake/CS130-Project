@@ -268,29 +268,23 @@ class EFITestCase(TestCase):
     def test_visualize_mapping(self):
         """Test visualize_mapping with GET and POST requests"""
         
-        mapping = Mapping(
+        mapping = Mapping.objects.create(
             title="Test Mapping",
             graph_name="Test_Graph",
             description="Test description",
             fuseki_relations=[["Test Attribute 1", "Test Relation", "Test Attribute 2"]],
             excel_format={"test": "format"},
         )
-        mapping.save()
+        
         # GET request
         response_get = self.client.get(reverse('visualize_mapping'))
         self.assertEqual(response_get.status_code, 200)
         self.assertTemplateUsed(response_get, 'app/visualize_mapping.html')
 
         # POST request - success
-        response_post_success = self.client.post(reverse('visualize_mapping'), {'mappingTitle': 'Test Mapping'})
+        response_post_success = self.client.post(reverse('visualize_mapping'), {'mapping': mapping.pk})
         self.assertEqual(response_post_success.status_code, 200)
         self.assertTemplateUsed(response_post_success, 'app/visualization_result.html')
-
-        # POST request - failure (mapping not found)
-        response_post_failure = self.client.post(reverse('visualize_mapping'), {'mappingTitle': 'Nonexistent Mapping'})
-        self.assertEqual(response_post_failure.status_code, 200)
-        self.assertTemplateUsed(response_post_failure, 'app/visualize_mapping.html')
-        self.assertIn('error', response_post_failure.context)
 
 class UploadViewTest(TestCase):
     def setUp(self):
