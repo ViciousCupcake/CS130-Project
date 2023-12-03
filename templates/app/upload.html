@@ -15,11 +15,6 @@
     <input type="text" name="q" placeholder="Search mappings..." value="{{ query }}">
     <button type="submit" class="clear">Search</button>
 </form>
-<div class="center">
-    <!-- Button linking to the visualize_mapping page -->
-    <a href="{% url 'visualize_mapping' %}"><button class="shiny">Visualize a Mapping</button></a>
-</div>
-<div class="line"></div>
 <h1 class="title2">Upload an Excel File</h1>
 {% if error %}
     <div class="error-msg">

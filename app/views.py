@@ -53,12 +53,13 @@ def search_mappings(request):
 def visualize_mapping(request):
     """Visualize a mapping based on user input"""
 
+    mappings = Mapping.objects.all()
     if request.method == 'POST':
-        mapping_title = request.POST.get('mappingTitle')
+        selected_mapping_id = request.POST['mapping']
 
         # Query the Mapping model to get the desired mapping
         try:
-            mapping = Mapping.objects.get(title=mapping_title)
+            mapping = Mapping.objects.get(pk=selected_mapping_id)
             relations = mapping.fuseki_relations
 
             # Visualize the mapping and save it as an image
@@ -68,10 +69,10 @@ def visualize_mapping(request):
 
         except Mapping.DoesNotExist:
             # Handle the case where the mapping does not exist
-            return render(request, 'app/visualize_mapping.html', {'error': 'Mapping not found'})
+            return render(request, 'app/visualize_mapping.html', {'mappings': mappings, 'error': 'Mapping not found'})
 
     # For a GET request, just render the form
-    return render(request, 'app/visualize_mapping.html')
+    return render(request, 'app/visualize_mapping.html', {"mappings": mappings})
 
 @login_required
 @user_passes_test(is_admin)
