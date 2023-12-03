@@ -1,5 +1,5 @@
 Django>=4.0
-psycopg2>=2.8
+psycopg2-binary
 numpy>=1.21.2
 openpyxl>=3.1.2
 sparqlwrapper>=1.8.5
