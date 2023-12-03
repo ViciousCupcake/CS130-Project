@@ -287,7 +287,7 @@ class EFITestCase(TestCase):
         self.assertTemplateUsed(response_post_success, 'app/visualization_result.html')
 
         # POST request - failure (mapping not found)
-        response_post_failure = self.client.post(reverse('visualize_mapping'), {'mapping': mapping.pk})
+        response_post_failure = self.client.post(reverse('visualize_mapping'), {'mapping': 'Nonexistent Mapping'})
         self.assertEqual(response_post_failure.status_code, 200)
         self.assertTemplateUsed(response_post_failure, 'app/visualize_mapping.html')
         self.assertIn('error', response_post_failure.context)
