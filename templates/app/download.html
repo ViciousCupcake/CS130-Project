@@ -12,6 +12,11 @@
 </header>
 <h1 class="title">Download</h1>
 <h3>Please pick a mapping to query the database with.</h3>
+{% if error %}
+    <div class="error-msg">
+        {{ error }}
+    </div>
+{% endif %}
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="table-container">

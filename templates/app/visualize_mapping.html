@@ -9,6 +9,11 @@
     </div>
 </header>
 <h1 class="title">Visualize Mapping</h1>
+{% if error %}
+    <div class="error-msg">
+        {{ error }}
+    </div>
+{% endif %}
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="table-container">
