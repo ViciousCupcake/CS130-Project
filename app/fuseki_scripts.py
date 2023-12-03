@@ -27,6 +27,9 @@ attribute - relation - attribute
 def create_sparql_graph(graph_name: str):
     """
     Creates a sparql graph which adheres to the relations in the schema.
+
+    :param graph_name: Name of the graph to create
+    :return: None
     """
     sparql = SPARQLWrapper(f"{API_BASE_URL}/update")
     sparql.setCredentials(fuseki_username, fuseki_password)
@@ -41,6 +44,9 @@ def create_sparql_graph(graph_name: str):
 def remove_sparql_graph(graph_name: str):
     """
     Removes a sparql graph
+
+    :param graph_name: Name of the graph to remove
+    :return: None
     """
     sparql = SPARQLWrapper(f"{API_BASE_URL}/update")
     sparql.setCredentials(fuseki_username, fuseki_password)
@@ -65,6 +71,11 @@ def insert_pandas_dataframe_into_sparql_graph(graph_name: str, relation_mapping_
     
     Postconditions:
     - The dataframe is inserted into the sparql graph
+
+    :param graph_name: Name of the graph to insert the data into
+    :param relation_mapping_name: Name of the relation mapping to use
+    :param dataframe: Dataframe to insert into the graph
+    :return: None
     """
     sparql = SPARQLWrapper(f"{API_BASE_URL}/update")
     sparql.setCredentials(fuseki_username, fuseki_password)
@@ -101,6 +112,11 @@ def fuseki_relations_to_sparql_response(map_relations, graph_name: str):
 
     Postcondition:
     - Return the response returned form the query
+
+    :param map_relations: Relations to use in the query
+    :param graph_name: Name of the graph to query
+    :return: Response from the query
+
     """
 
     sparql = SPARQLWrapper(f"{API_BASE_URL}/query")
@@ -139,6 +155,10 @@ def fuseki_response_to_DataFrame(response):
     - response is a response from fuseki
     Postcondition:
     - Return the converted DataFrame
+
+    :param response: Response from fuseki
+    :return: DataFrame
+    
     """
     
     response = response["results"]["bindings"]

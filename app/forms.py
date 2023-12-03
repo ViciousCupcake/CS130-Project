@@ -10,6 +10,8 @@ from django import forms
 class MappingForm(ModelForm):
     """
     This class defines the form for the :model: `app.Mapping` model.
+
+    This form is used to create Mapping objects in the database. This form helps map the fields in the form to the fields in the database. This form is important because it allows us to create Mapping objects in the database without the need to write SQL queries.
     """
     class Meta:
         """

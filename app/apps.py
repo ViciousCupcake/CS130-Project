@@ -9,6 +9,8 @@ from django.apps import AppConfig
 class AppConfig(AppConfig):
     """
     This class defines the configuration for the app.
+
+    Specifically, it defines the field used for the primary key for all models in the app.
     """
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'app'

@@ -26,8 +26,10 @@ SECRET_KEY = 'django-insecure-fjh-2pcsg@#bf_m*v3ztwvn#i)k-n()8_yuxpn4mfd8m%i0skc
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Hosts allowed to access the site
 ALLOWED_HOSTS = ['*']
 
+# Login and logout URLs
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
@@ -45,6 +47,7 @@ INSTALLED_APPS = [
     'app',
 ]
 
+# Middleware used by the project
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -57,6 +60,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'cs130_efi.urls'
 
+# Templates used by the project
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -73,12 +77,14 @@ TEMPLATES = [
     },
 ]
 
+# WSGI application used by the project
 WSGI_APPLICATION = 'cs130_efi.wsgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# Database used by the project
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -124,8 +130,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
+# Static files used by the project
 STATIC_URL = 'static/'
 
+# Static files used by the project
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
