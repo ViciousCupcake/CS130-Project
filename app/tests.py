@@ -297,17 +297,27 @@ class UploadViewTest(TestCase):
         self.client = Client()
         
     def test_get_request(self):
+        """
+        Test that GET request to /upload/ returns upload.html template.
+        """
         response = self.client.get('/upload/')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'app/upload.html')
         
     def test_invalid_post_request(self):
+        """
+        Test that POST request to /upload/ with invalid data returns upload.html template.
+        """
         response = self.client.post('/upload/', {})
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'app/upload.html')
         self.assertIn('error', response.context)
 
     def test_invalid_file_type(self):
+        """
+        Test that POST request to /upload/ with invalid file type returns upload.html template.
+        """
+
         invalid_format = SimpleUploadedFile('test.txt', b'this is invalid format', content_type='text/plain')
         m = Mapping.objects.create(title='test', description='test', fuseki_relations=[["test", "test", "test"]], excel_format='{"test": "test"}')
         response = self.client.post('/upload/', {'excelFile': invalid_format, 'mapping': m.pk})
@@ -316,12 +326,18 @@ class UploadViewTest(TestCase):
         self.assertIn('error', response.context)
 
     def test_unresolved_request_method(self):
+        """
+        Test that DELETE request to /upload/ returns upload.html template.
+        """
         response = self.client.delete('/upload/')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'app/upload.html')
         self.assertIn('data', response.context)
         
     def test_valid_post_request(self):
+        """
+        Test that POST request to /upload/ with valid data returns upload.html template.
+        """
         df = pd.DataFrame({'Data1': [1, 2, 3], 'Data2': [5, 6, 7]})
         excel_file = BytesIO()
         df.to_excel(excel_file)
@@ -341,10 +357,16 @@ class RegistrationSystemTests(TestCase):
         self.normal_user = User.objects.create_user(username='normaluser', password='password123')
 
     def test_register_page_access(self):
+        """
+        Test that GET request to /register/ returns register.html template.
+        """
         response = self.client.get(reverse('register'))
         self.assertEqual(response.status_code, 200)
 
     def test_user_registration(self):
+        """
+        Test that POST request to /register/ with valid data creates a new user.
+        """
         user_data = {
             'username': 'testuser',
             'password1': 'some_strong_psw',
@@ -357,21 +379,33 @@ class RegistrationSystemTests(TestCase):
         self.assertFalse(user.is_superuser)
 
     def test_normal_user_role(self):
+        """
+        Test that normal users are not admins.
+        """
         self.client.login(username='normaluser', password='password123')
         response = self.client.get(reverse('index'))  # Redirect back to index.html 
         self.assertNotIn('You are an admin!', response.content.decode())
 
     def test_admin_user_role(self):
+        """
+        Test that admin users are admins.
+        """
         self.client.login(username='adminuser', password='adminpassword')
         response = self.client.get(reverse('index'))
         self.assertIn('You are an admin', response.content.decode())
 
     def test_modify_page_access_by_normal_user(self):
+        """
+        Test that normal users cannot access modify.html.
+        """
         self.client.login(username='normaluser', password='password123')
         response = self.client.get(reverse('modify'))
         self.assertNotEqual(response.status_code, 200)
 
     def test_modify_page_access_by_admin(self):
+        """
+        Test that admin users can access modify.html.
+        """
         self.client.login(username='adminuser', password='adminpassword')
         response = self.client.get(reverse('modify'))
         self.assertEqual(response.status_code, 200)

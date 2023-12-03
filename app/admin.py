@@ -16,6 +16,8 @@ from app.models import Mapping, GeneratedExcelFile
 class MappingAdmin(admin.ModelAdmin):
     """
     This class defines the admin interface for the :model: `app.Mapping` model.
+
+    This defines what properties are displayed in the admin interface.
     """
     list_display = ['title', 'description', 'last_updated']
 
@@ -23,6 +25,8 @@ class MappingAdmin(admin.ModelAdmin):
 class GeneratedExcelFileAdmin(admin.ModelAdmin):
     """
     This class defines the admin interface for the :model: `app.GeneratedExcelFile` model.
+
+    This defines what properties are displayed in the admin interface.
     """
 
     list_display = ['excel_file', 'last_updated']

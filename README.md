@@ -6,6 +6,13 @@ Django is available at localhost:8000
 Username for fuseki: admin
 password: postgres
 
+Documentation is accessible at the following URL:
+http://ec2-34-217-96-31.us-west-2.compute.amazonaws.com/
+
+Note: Please ensure you access this server with `http` and not `https`. Our documentation server is not configured for https, since acquiring the requisite SSL certificate is out of our budget. Modern browsers automatically redirect to using `https`, so if you have this setting enabled in your browser, you might face issues accessing this page.
+
+
+TODO: update the below shields.
 [![Build Status](https://app.travis-ci.com/melaasar/cs130-template.svg?branch=master)](https://app.travis-ci.com/github/melaasar/cs130-template)
 [![Release](https://img.shields.io/github/v/release/melaasar/cs130-template?label=release)](https://github.com/melaasar/cs130-template/releases/latest)
 

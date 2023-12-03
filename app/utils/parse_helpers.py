@@ -7,7 +7,13 @@ import pandas as pd
 from rdflib import Graph, Literal, Namespace, URIRef
 
 def parse_excel(file, name):
-    """Convert an excel sheet to rdf"""
+    """
+    Convert an excel sheet to rdf
+    
+    :param file: excel file to be converted
+    :param name: name of the excel file
+    :return: a tuple of prefixes and triples
+    """
 
     df = pd.read_excel(file)
     

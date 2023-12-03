@@ -1,7 +1,10 @@
 """
+This file is used to generate documentation for the app.
+This documentation is in the form of a HTML page.
+
 To use this, run the following command:
-    python my_doc.py -p 8080
-Then, go to http://localhost:8080/ to see the documentation.
+    python generate-documentation.py -p 80 -n 0.0.0.0
+Then, go to http://localhost:80/ to see the documentation.
 """
 
 import django

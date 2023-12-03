@@ -11,6 +11,7 @@ def visualize_relations(relations, filepath):
     Visualize the relations(mapping) as a graph.
 
     :param relations: Relations between attributes in a table
+    :param filepath: Path to save the graph
     :return: None
     """
 

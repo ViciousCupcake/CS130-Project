@@ -23,24 +23,42 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 def is_admin(user):
     """
     Returns True if the user is an admin, False otherwise.
+
+    :param user: The user to check.
+    :type user: User
+    :return: True if the user is an admin, False otherwise.
     """
     return user.is_authenticated and user.is_superuser
 
 def index(request):
     """
     Renders the index page.
+
+    :param request: The request object.
+    :type request: HttpRequest
+    :return: The rendered index page.
     """
     return render(request, "app/index.html", {'data': 'Hello, world!'})
 
 def list(request):
     """
     Renders the list page, which lists all mappings.
+
+    :param request: The request object.
+    :type request: HttpRequest
+    :return: The rendered list page.
     """
     mappings = Mapping.objects.all()
     return render(request, "app/list.html", {"mappings": mappings})
 
 def search_mappings(request):
-    """Allows users to search for a mapping"""
+    """
+    Allows users to search for a mapping
+    
+    :param request: The request object.
+    :type request: HttpRequest
+    :return: The mappings that match the search query.
+    """
 
     query = request.GET.get('q', '')
     if query:
@@ -51,7 +69,13 @@ def search_mappings(request):
     return mappings
 
 def visualize_mapping(request):
-    """Visualize a mapping based on user input"""
+    """
+    Visualize a mapping based on user input
+    
+    :param request: The request object.
+    :type request: HttpRequest
+    :return: The rendered visualization page.
+    """
 
     if request.method == 'POST':
         mapping_title = request.POST.get('mappingTitle')
@@ -76,7 +100,13 @@ def visualize_mapping(request):
 @login_required
 @user_passes_test(is_admin)
 def select_mapping(request):
-    """View that allows Administrative users to pick a mapping to modify"""
+    """
+    View that allows Administrative users to pick a mapping to modify.
+    
+    :param request: The request object.
+    :type request: HttpRequest
+    :return: The rendered select_mapping page.
+    """
     if request.method == 'GET':
         mappings = Mapping.objects.all()
         return render(request, "app/select_mapping.html", {'mappings': mappings})
@@ -84,7 +114,15 @@ def select_mapping(request):
 @login_required
 @user_passes_test(is_admin)
 def modify_mapping(request, pk=None):
-    """View that allows Administrative users to modify a mapping"""
+    """
+    View that allows Administrative users to modify a mapping
+    
+    :param request: The request object.
+    :type request: HttpRequest
+    :param pk: The primary key of the mapping to modify.
+    :type pk: int
+    :return: The rendered modify page.
+    """
     # The request method is GET if we are loading the webpage for the first time
     if request.method == 'GET':
         # Attempt to preload mapping information to form if it already exists in db
@@ -112,7 +150,13 @@ def modify_mapping(request, pk=None):
 @login_required
 @user_passes_test(is_admin)  
 def delete_mapping(request):
-    """View that allows Administrative users to delete a mapping"""
+    """
+    View that allows Administrative users to delete a mapping
+    
+    :param request: The request object.
+    :type request: HttpRequest
+    :return: The rendered select_mapping page.
+    """
     if request.method == 'POST':
         mapping = Mapping.objects.get(pk=request.POST['id'])
         mapping.delete()
@@ -123,7 +167,13 @@ def delete_mapping(request):
         return redirect('index')
 
 def upload_to_fuseki(rdf_data):
-    """Uploaded parsed data (rdf data) to fuseki"""
+    """
+    Uploaded parsed data (rdf data) to fuseki
+    
+    :param rdf_data: The rdf data to upload to fuseki.
+    :type rdf_data: list
+    :return: None
+    """
 
     sparql = SPARQLWrapper("http://fuseki:3030/mydataset/update")
     # Set the credentials for authentication
@@ -138,7 +188,13 @@ def upload_to_fuseki(rdf_data):
     sparql.query()
     
 def upload(request):
-    """ Upload and parse an excel sheet"""
+    """
+    Upload and parse an excel sheet
+    
+    :param request: The request object.
+    :type request: HttpRequest
+    :return: The rendered upload page.
+    """
 
     if request.method == 'POST':
         mappings = Mapping.objects.all()
@@ -171,7 +227,13 @@ def upload(request):
         return render(request, "app/upload.html", {"data": 'unresolved request'})
 
 def download(request):
-    """Download an excel sheet"""
+    """
+    Download an excel sheet
+    
+    :param request: The request object.
+    :type request: HttpRequest
+    :return: The rendered download page.
+    """
 
     # If user is accessing this page for the first time,
     # present the user with a list of mappings available.
@@ -204,7 +266,15 @@ def download(request):
         return render(request, "app/export-success.html", {'file_pk': file_model.pk, 'selected_mapping': selected_mapping, 'df':df, 'headers':headers})
 
 def download_file(request, pk):
-    """Download a preexisting excel file"""
+    """
+    Download a preexisting excel file
+    
+    :param request: The request object.
+    :type request: HttpRequest
+    :param pk: The primary key of the excel file to download.
+    :type pk: int
+    :return: The rendered download page.
+    """
     
     file_model = GeneratedExcelFile.objects.get(pk=pk)
     file_name = file_model.excel_file.name.split('/')[-1]
@@ -213,7 +283,13 @@ def download_file(request, pk):
     return response
 
 def register(request):
-    """Register a new user"""
+    """
+    Register a new user
+    
+    :param request: The request object.
+    :type request: HttpRequest
+    :return: The rendered register page.
+    """
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
         if form.is_valid():
