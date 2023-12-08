@@ -42,7 +42,8 @@ https://github.com/ViciousCupcake/CS130-Project/wiki
 ### API Documentation
 - The API Documentation is accessible at the following URL:
 https://efi.jonathan-xu.com/
-
+https://github.com/ViciousCupcake/CS130-Project/actions/workflows/test.yml/badge.svg
 TODO: update the below shields.
-[![Build Status](https://app.travis-ci.com/melaasar/cs130-template.svg?branch=master)](https://app.travis-ci.com/github/melaasar/cs130-template)
+[![Build Status](https://github.com/ViciousCupcake/CS130-Project/actions/workflows/test.yml/badge.svg)
+
 [![Release](https://img.shields.io/github/v/release/melaasar/cs130-template?label=release)](https://github.com/melaasar/cs130-template/releases/latest)
