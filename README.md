@@ -11,7 +11,6 @@ In our EFi project, we've streamlined the development workflow by implementing a
 - Ensure Docker Desktop is installed and running on your machine.
 
 ### Build Process
-  **Setting Up the Environment**:
    - Execute `./start.sh` in the project root directory. This script initializes the Docker environment, as well as sets up the three containers required for our project.
    - After the initial setup is completed, the Django server is automatically started for local access.
    - To gracefully stop the server, press `Ctrl + C` to shut down the server.
@@ -19,12 +18,12 @@ In our EFi project, we've streamlined the development workflow by implementing a
 
 ## Running the Project
 - To run the project after initial setup, execute `./start.sh` in the project root directory.
-- Fuseki is available at localhost:3030
-- Django is available at localhost:8000
+- Fuseki is available at `localhost:3030`
+- Django is available at `localhost:8000`
 - To gracefully stop the server, press `Ctrl + C` to shut down the server.
 - NOTE: Failing to gracefully shut down the server may result in problems with the database and you may have to rebuild the whole project. 
 
-## Testing the Application
+## Testing the Project
 
 ### Running Tests
 - We employ Django's built-in testing framework, with tests defined in `tests.py`.
