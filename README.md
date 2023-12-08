@@ -4,7 +4,9 @@
 In our EFi project, we've streamlined the development workflow by implementing an automated build and test process. In the following sections, we will describe the process to build, run, and test our project.
 
 ## Building the project
+The build process is done via GitHub Actions. Our CI setup, defined in `.github/workflows/test.yml`, automatically triggers on every code commit. This CI pipeline is triggered to activate upon code commits or pull requests to the master branch. Once triggered, the pipeline checks out the latest version of the code, ensuring that the most recent changes are included in the integration process. It then sets up the Docker environment as defined in docker-compose.yml to complete the build. Following this, Django tests are executed and the outcome of these tests is then reported.
 
+If you wish to build on your local machine, please follow the following steps:
 ### Prerequisites
 - Ensure Docker Desktop is installed and running on your machine.
 
