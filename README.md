@@ -39,7 +39,7 @@ For admin access to test admin-only features in our project, use the following c
 https://github.com/ViciousCupcake/CS130-Project/wiki
 ### API Documentation
 - The API Documentation is accessible at the following URL:
-http://efi.jonathan-xu.com/
+[http://efi.jonathan-xu.com/](https://efi.jonathan-xu.com/)
 
 TODO: update the below shields.
 [![Build Status](https://app.travis-ci.com/melaasar/cs130-template.svg?branch=master)](https://app.travis-ci.com/github/melaasar/cs130-template)
