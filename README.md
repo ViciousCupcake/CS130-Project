@@ -43,5 +43,5 @@ https://github.com/ViciousCupcake/CS130-Project/wiki
 - The API Documentation is accessible at the following URL:
 https://efi.jonathan-xu.com/
 
-![Build Status](https://github.com/ViciousCupcake/CS130-Project/actions/workflows/test.yml/badge.svg)  [![Release](https://img.shields.io/github/v/release/ViciousCupcake/CS130-Project?label=release)](https://github.com/ViciousCupcake/CS130-Project/releases/latest)
+![Tests](https://github.com/ViciousCupcake/CS130-Project/actions/workflows/test.yml/badge.svg)  [![Release](https://img.shields.io/github/v/release/ViciousCupcake/CS130-Project?label=release)](https://github.com/ViciousCupcake/CS130-Project/releases/latest)
 
