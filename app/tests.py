@@ -164,7 +164,7 @@ class EFITestCase(TestCase):
         User.objects.create_user(username='test', password='test')
         self.client.login(username='test', password='test')
         response = self.client.get('/accounts/logout/')
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 405)
 
     def test_upload_to_fuseki(self):
         """Test upload rdf to fuseki."""
